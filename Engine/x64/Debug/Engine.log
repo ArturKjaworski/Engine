@@ -1,0 +1,35 @@
+﻿  stdafx.cpp
+c:\program files (x86)\windows kits\10\include\10.0.15063.0\shared\minwindef.h(127): warning C4005: "CALLBACK": ponowna definicja makra
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\gl\glut.h(34): note: zobacz poprzednią definicję „CALLBACK”
+  Vec3.cpp
+  Player.cpp
+  PickUp_Obj.cpp
+  Interactable_Obj.cpp
+  Engine.cpp
+d:\c++\engine\movement-in-c\engine\engine.cpp(6): warning C4005: "width": ponowna definicja makra
+  d:\c++\engine\movement-in-c\engine\camera.h(4): note: zobacz poprzednią definicję „width”
+d:\c++\engine\movement-in-c\engine\engine.cpp(7): warning C4005: "height": ponowna definicja makra
+  d:\c++\engine\movement-in-c\engine\camera.h(5): note: zobacz poprzednią definicję „height”
+  Camera.cpp
+  Generowanie kodu...
+d:\c++\engine\movement-in-c\engine\vec3.cpp(41): warning C4172: zwracanie adresu lokalnej zmiennej lub tymczasowej: tmp
+Engine.obj : error LNK2019: nierozpoznany zewnętrzny symbol __imp___glutInitWithExit przywołany w funkcji glutInit_ATEXIT_HACK
+Engine.obj : error LNK2019: nierozpoznany zewnętrzny symbol __imp_glutInitDisplayMode przywołany w funkcji main
+Engine.obj : error LNK2019: nierozpoznany zewnętrzny symbol __imp_glutInitWindowPosition przywołany w funkcji main
+Engine.obj : error LNK2019: nierozpoznany zewnętrzny symbol __imp_glutInitWindowSize przywołany w funkcji main
+Engine.obj : error LNK2019: nierozpoznany zewnętrzny symbol __imp_glutMainLoop przywołany w funkcji main
+Engine.obj : error LNK2019: nierozpoznany zewnętrzny symbol __imp___glutCreateWindowWithExit przywołany w funkcji glutCreateWindow_ATEXIT_HACK
+Engine.obj : error LNK2019: nierozpoznany zewnętrzny symbol __imp_glutSwapBuffers przywołany w funkcji "void __cdecl render(void)" (?render@@YAXXZ)
+Engine.obj : error LNK2019: nierozpoznany zewnętrzny symbol __imp_glutSetCursor przywołany w funkcji main
+Engine.obj : error LNK2019: nierozpoznany zewnętrzny symbol __imp_glutWarpPointer przywołany w funkcji "void __cdecl render(void)" (?render@@YAXXZ)
+Engine.obj : error LNK2019: nierozpoznany zewnętrzny symbol __imp_glutDisplayFunc przywołany w funkcji main
+Engine.obj : error LNK2019: nierozpoznany zewnętrzny symbol __imp_glutReshapeFunc przywołany w funkcji main
+Engine.obj : error LNK2019: nierozpoznany zewnętrzny symbol __imp_glutKeyboardFunc przywołany w funkcji main
+Engine.obj : error LNK2019: nierozpoznany zewnętrzny symbol __imp_glutMouseFunc przywołany w funkcji main
+Engine.obj : error LNK2019: nierozpoznany zewnętrzny symbol __imp_glutMotionFunc przywołany w funkcji main
+Engine.obj : error LNK2019: nierozpoznany zewnętrzny symbol __imp_glutPassiveMotionFunc przywołany w funkcji main
+Engine.obj : error LNK2019: nierozpoznany zewnętrzny symbol __imp_glutTimerFunc przywołany w funkcji "void __cdecl timer(int)" (?timer@@YAXH@Z)
+Engine.obj : error LNK2019: nierozpoznany zewnętrzny symbol __imp_glutSolidSphere przywołany w funkcji "void __cdecl render(void)" (?render@@YAXXZ)
+Engine.obj : error LNK2019: nierozpoznany zewnętrzny symbol __imp_glutSolidCube przywołany w funkcji "void __cdecl renderObj(void)" (?renderObj@@YAXXZ)
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.10.25017\lib\x64\glut32.lib : warning LNK4272: wystąpił konflikt typu maszyny biblioteki „X86” z typem maszyny docelowej „x64”
+D:\C++\Engine\Movement-in-C\x64\Debug\Engine.exe : fatal error LNK1120: liczba nierozpoznanych elementów zewnętrznych: 18
