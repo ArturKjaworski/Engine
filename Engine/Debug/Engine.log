@@ -1,11 +1,3 @@
 ﻿  Camera.cpp
-d:\c++\engine\engine\camera.cpp(59): warning C4552: "+": operator nie ma żadnego wpływu; oczekiwano operatora z efektem ubocznym
-  Generowanie kodu...
-  Trwa kompilowanie...
-  Vec3.cpp
-  Player.cpp
-  Generowanie kodu...
-  Pomijanie... (nie wykryto odpowiednich zmian)
-  Engine.cpp
   Engine.vcxproj -> D:\C++\Engine\Debug\Engine.exe
   Engine.vcxproj -> D:\C++\Engine\Debug\Engine.pdb (Partial PDB)

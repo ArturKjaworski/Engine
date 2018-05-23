@@ -14,11 +14,9 @@ Vec3::~Vec3()
 {
 }
 
-
-
 Vec3& Vec3::normalize()
 {
-	float l = sqrt(pow(x,2) + pow(y,2) + pow(z,2));
+	float l = sqrt(pow(x,2) + pow(y,2) + pow(z,2)); 
 	x /= l;
 	y /= l;
 	z /= l;
@@ -35,32 +33,103 @@ Vec3 Vec3::operator=(Vec3& v)
 
 Vec3& Vec3::operator+(const Vec3& v)
 {
-	x += v.x;
-	y += v.y;
-	z += v.z;
+	Vec3 tmp = Vec3(x, y, z);
+	tmp.x += v.x;
+	tmp.y += v.y;
+	tmp.z += v.z;
+	return tmp;
+}
+
+Vec3& Vec3::operator+=(const Vec3& v)
+{
+	x -= v.x;
+	y -= v.y;
+	z -= v.z;
 	return *this;
 }
 
-Vec3 Vec3::operator-(const Vec3& v)
+Vec3& Vec3::operator-(const Vec3& v)
 {
-	Vec3* tmp = new Vec3(x,y,z);
-	tmp->x = tmp->x - v.x;
-	tmp->y -= v.y;
-	tmp->z -= v.z;
+	Vec3 tmp = Vec3(x,y,z);
+	tmp.x -= v.x;
+	tmp.y -= v.y;
+	tmp.z -= v.z;
 	
-	return *tmp;
+	return tmp;
 }
-Vec3& Vec3::operator*(float& val)
+
+Vec3& Vec3::operator-=(const Vec3& v)
+{
+	x -= v.x;
+	y -= v.y;
+	z -= v.z;
+	return *this;
+}
+
+Vec3& Vec3::operator*(const float& val)
+{
+	Vec3 tmp = Vec3(x, y, z);
+	tmp.x *= val;
+	tmp.y *= val;
+	tmp.z *= val;
+	return tmp;
+}
+
+Vec3& Vec3::operator*(const Vec3& v)
+{
+	Vec3 tmp = Vec3(x, y, z);
+	tmp.x *= v.x;
+	tmp.y *= v.y;
+	tmp.z *= v.z;
+	return tmp;
+}
+
+Vec3& Vec3::operator*=(const float& val)
 {
 	x *= val;
 	y *= val;
 	z *= val;
 	return *this;
 }
-Vec3* Vec3::operator-=(const Vec3* v)
-{	
-	x -= v->x;
-	y -= v->y;
-	z -= v->z;
-	return this;
+
+Vec3& Vec3::operator*=(const Vec3& v)
+{
+	x *= v.x;
+	y *= v.y;
+	z *= v.z;
+	return *this;
+}
+
+Vec3& Vec3::operator/(const float& val)
+{
+	Vec3 tmp = Vec3(x, y, z);
+	tmp.x /= val;
+	tmp.y /= val;
+	tmp.z /= val;
+	return tmp;
+}
+
+Vec3& Vec3::operator/(const Vec3& v)
+{
+	Vec3 tmp = Vec3(x, y, z);
+	tmp.x /= v.x;
+	tmp.y /= v.y;
+	tmp.z /= v.z;
+	return tmp;
+}
+
+Vec3& Vec3::operator/=(const float& val)
+{
+	x /= val;
+	y /= val;
+	z /= val;
+	return *this;
+}
+
+Vec3& Vec3::operator/=(const Vec3& v)
+{
+	x /= v.x;
+	y /= v.y;
+	z /= v.z;
+	return *this;
 }

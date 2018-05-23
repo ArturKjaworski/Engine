@@ -2,12 +2,11 @@
 #include "Player.h"
 #include "PickUp_Obj.h"
 
-
 #define width 920
 #define height 640
-Interactable_Obj* ob;
-PickUp_Obj* obj;
-Player* player = new Player();
+//Interactable_Obj* ob;		
+//PickUp_Obj* obj;
+Player player;
 bool down = false;	
 
 void intro()
@@ -35,10 +34,10 @@ void renderObj()
 	glColor3f(0, 1, 1);
 	glPushMatrix();
 	glBegin(GL_QUADS);
-		glVertex3f(-10, 1, -10);
-		glVertex3f(10, 1, -10);
-		glVertex3f(10, 1, 10);
-		glVertex3f(-10, 1, 10);
+		glVertex3f(-10, 10, -10);
+		glVertex3f(10, 10, -10);
+		glVertex3f(10, 10, 10);
+		glVertex3f(-10, 10, 10);
 	glEnd();
 	glPopMatrix();
 	////////
@@ -46,12 +45,25 @@ void renderObj()
 	glColor3f(1, 0, 0);
 
 	glPushMatrix();
-	glTranslatef(0, -0.8, -5);
+	glTranslatef(0, 0.0, -5);
 	glutSolidCube(.05);
 	glPopMatrix();
 
+	glColor3f(0, 0, 1);
 	glPushMatrix();
-	glTranslatef(0, 0.8, -5);
+	glTranslatef(0, 0.0, 5);
+	glutSolidCube(.05);
+	glPopMatrix();
+
+	glColor3f(0, 1, 1);
+	glPushMatrix();
+	glTranslatef(5, 0.0, 0);
+	glutSolidCube(.05);
+	glPopMatrix();
+
+	glColor3f(1, 1, 0);
+	glPushMatrix();
+	glTranslatef(-5, 0.0, 0);
 	glutSolidCube(.05);
 	glPopMatrix();
 	////////
@@ -64,15 +76,15 @@ void render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 	
-	gluLookAt(-player->cam->getPos('x'), -player->cam->getPos('y'), -player->cam->getPos('z'),
-		-player->getPos('x'), -player->getPos('y'), -player->getPos('z'),
+	gluLookAt(-player.cam.getPos('x'), -player.cam.getPos('y'), -player.cam.getPos('z'),
+		-player.getPos('x'), -player.getPos('y'), -player.getPos('z'),
 		0, 1, 0);
 
 	renderObj();
 	////character
 	glColor3f(0, 0, 1);
 	glPushMatrix();
-	glTranslatef(-player->getPos('x'), -player->getPos('y'), -player->getPos('z'));
+	glTranslatef(-player.getPos('x'), -player.getPos('y'), -player.getPos('z'));
 	glutSolidTeapot(.1);
 	glPopMatrix();
 
@@ -84,7 +96,7 @@ void reshape(int x, int y)
 	glViewport(0, 0, width, height);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(60.0f, width / height, 0.1f, 1000.0f);
+	gluPerspective(60.0f, width / height, 0.1f, 100.0f);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
@@ -95,8 +107,8 @@ void keyboard(unsigned char key, int x, int y)
 	{
 		case '1':
 			system("cls");
-			obj = new PickUp_Obj("qwe");
-			cout << obj->getName();
+		//	obj = new PickUp_Obj("qwe");
+			
 			break;
 
 		case '2':
@@ -105,28 +117,28 @@ void keyboard(unsigned char key, int x, int y)
 			break;
 				
 		case 'w':
-			player->move(0, 0, 0.1);
-			cout << player->getPos('z')<<endl;
+			player.move(0, 0, 0.1);
+			cout << player.getPos('z')<<endl;
 			break;
 
 		case 's':
-			player->move(0, 0, -0.1);
+			player.move(0, 0, -0.1);
 			break;
 
 		case 'a':
-			player->move(.1, 0, 0);
+			player.move(.1, 0, 0);
 		
 			break;
 
 		case 'd':
-			player->move(-.1, 0, 0);
+			player.move(-.1, 0, 0);
 			break;
 		case 'z':
-			player->move(0, .1, 0);
+			player.move(0, .1, 0);
 			break;
 
 		case 'x':
-			player->move(0, -.1, 0);
+			player.move(0, -.1, 0);
 			break;
 
 		case 'Q':
@@ -148,7 +160,7 @@ void mouse(int but, int state, int x, int y)
 	if (but == GLUT_RIGHT_BUTTON && state == GLUT_UP)
 		down = false;
 
-	if (but == GLUT_LEFT_BUTTON)
+	if (but == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 		cout << "fail" << endl;
 }
 
@@ -156,14 +168,14 @@ void mouse(int but, int state, int x, int y)
 void mouseMove(int x, int y)
 {
 	//if (down)
-	player->mouse(x - width / 2, y - height / 2);
+	player.mouse(x - width / 2, y - height / 2);
 	
 }
 
 //move in that direction
 void passiveMouseMove(int x, int y)
 {
-	player->look(x - width / 2, y - height / 2);
+	player.look(x - width / 2, y - height / 2);
 }
 
 void timer(int val)
@@ -192,7 +204,7 @@ int main(int argc, char *argv[])
 	glutPassiveMotionFunc(passiveMouseMove);
 
 	glutWarpPointer(width / 2, height / 2);
-	glutSetCursor(GLUT_CURSOR_NONE);
+	//glutSetCursor(GLUT_CURSOR_NONE);
 	
 	glutTimerFunc(1000 / 120, timer, 0);
 	glutMainLoop();

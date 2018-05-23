@@ -11,8 +11,8 @@ public:
 	Camera(int);
 	~Camera();
 
-	Vec3* camPos;
-	Vec3* camRot;
+	Vec3 camPos;
+	Vec3 camRot;
 
 	float camDist;
 	bool mMove;
@@ -20,7 +20,7 @@ public:
 	void zoomout(Vec3 v);
 	void zoomin(Vec3 v);
 
-	void mouse(const float&, const float&, const Vec3*);
+	void mouse(const float&, const float&, const Vec3&);
 	void keyboard(Vec3& v);
 
 	float getRot(const char&);

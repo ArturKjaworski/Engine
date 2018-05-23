@@ -13,9 +13,17 @@ public:
 	Vec3& normalize();
 	Vec3 operator= (Vec3&);
 
-	Vec3& operator+ (const Vec3&);
-	Vec3 operator- (const Vec3&);
-	Vec3 & operator*(float&);
-	Vec3* operator-=(const Vec3*);
+	Vec3& operator+(const Vec3&);
+	Vec3& operator+=(const Vec3&);
+	Vec3& operator-(const Vec3&);
+	Vec3& operator*(const float&);
+	Vec3& operator*=(const float&);
+	Vec3& operator*=(const Vec3&);
+	Vec3& operator/(const float&);
+	Vec3& operator/(const Vec3&);
+	Vec3& operator/=(const float&);
+	Vec3& operator/=(const Vec3&);
+	Vec3& operator*(const Vec3&);
+	Vec3& operator-=(const Vec3&);
 };
 

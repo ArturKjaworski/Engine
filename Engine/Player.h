@@ -12,12 +12,12 @@ public:
 	int stamina;
 	int mana;
 
-	Camera* cam;
+	Camera cam;
 
 private:
-	Vec3* pos;
-	Vec3* rot;
-	Vec3* forward;
+	Vec3 pos;
+	Vec3 rot;
+	Vec3 forward;
 public:
 
 	void move(const float&, const float&, const float&);
