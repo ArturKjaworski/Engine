@@ -1,3 +1,7 @@
-﻿  Camera.cpp
+﻿  Engine.cpp
+d:\c++\engine\engine\engine.cpp(5): warning C4005: "width": ponowna definicja makra
+  d:\c++\engine\engine\camera.h(4): note: zobacz poprzednią definicję „width”
+d:\c++\engine\engine\engine.cpp(6): warning C4005: "height": ponowna definicja makra
+  d:\c++\engine\engine\camera.h(5): note: zobacz poprzednią definicję „height”
   Engine.vcxproj -> D:\C++\Engine\Debug\Engine.exe
   Engine.vcxproj -> D:\C++\Engine\Debug\Engine.pdb (Partial PDB)

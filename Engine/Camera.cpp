@@ -4,11 +4,11 @@
 
 Camera::Camera()
 {
-	camDist = 2;
+	camDist = 1;
 	mMove = false;
 
-	camRot = Vec3();
-	camPos = Vec3(0,-2,-camDist);
+	camRot = Vec3(0,125,0);
+	camPos = Vec3();
 }
 
 Camera::Camera(int dist)
@@ -20,18 +20,19 @@ Camera::~Camera()
 {
 }
 
+//On HIATUS || glut dont provide wheel func
 void Camera::zoomout(Vec3 v)
 {
 	--camDist;
 	v.normalize();
-//	*camPos -= v * camDist;
+	camPos -= v * camDist;
 }
 
 void Camera::zoomin(Vec3 v)
 {
 	++camDist;
 	v.normalize();
-//	*camPos -= v * camDist;
+	camPos -= v * camDist;
 }
 
 void Camera::mouse(const float& rotx, const float& roty,const Vec3& pos)
@@ -42,7 +43,6 @@ void Camera::mouse(const float& rotx, const float& roty,const Vec3& pos)
 	camRot.x += rotx;
 	camRot.y += roty;
 
-	//170 0
 
 	if (camRot.y > 170)
 		camRot.y = 170;
@@ -53,9 +53,10 @@ void Camera::mouse(const float& rotx, const float& roty,const Vec3& pos)
 		camPos.z = camDist * -cos(camRot.x*PI / 180) + pos.z;
 
 		camPos.y = camDist* cos(camRot.y*PI / 180) + pos.y;
-	//camPos.z = camDist * sin(camRot.y*PI / 180); +pos.z;
-	//camPos.x = camDist * -cos(camRot.y*PI / 180) + pos.x;
-		cout << camRot.y << " "  << endl;
+
+		if (camPos.y >= 1)
+			camPos.y = 1;
+
 	glutWarpPointer(width / 2, height / 2);
 	mMove = true;
 	}

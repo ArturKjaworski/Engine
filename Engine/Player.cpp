@@ -9,9 +9,10 @@ Player::Player()
 
 	cam = Camera();
 
-	pos = Vec3(0.0,0.0,0.0);
+	pos = Vec3();
 	rot = Vec3();
-	forward = Vec3(0, 0, 2);
+	forward = Vec3();
+
 }
 
 Player::~Player()
@@ -19,15 +20,24 @@ Player::~Player()
 
 }
 
-void Player::move(const float& x, const float& y, const float& z)
+void Player::move(Dir dir,const int& speed)
 {
-	pos.x += x;
-	pos.y += y;
-	pos.z += z;
-	
-	cam.camPos.x += x;
-	cam.camPos.y += y;
-	cam.camPos.z += z;
+	switch (dir)
+	{
+	case front:
+		pos.x += forward.x*speed;
+		pos.z += forward.z*speed;
+		cam.camPos.x += forward.x*speed;
+		cam.camPos.z += forward.z*speed;;
+		break;
+	case back:
+		pos.x -= forward.x*speed;
+		pos.z -= forward.z*speed;
+		cam.camPos.x -= forward.x*speed;;
+		cam.camPos.z -= forward.z*speed;;
+		break;
+	}
+
 }
 
 void Player::look(const float& x, const float& y)
@@ -39,19 +49,22 @@ void Player::look(const float& x, const float& y)
 		rot.x += x;
 		rot.y += y;
 
-		
-
 		cam.mouse(x, y, pos);
+		setForward();
 
-		forward = cam.camPos;
-		forward.normalize();
-		//set new forward vector
-
-	//	cout<< "? "<<forward.x<<endl;
+		cout<< "? "<< forward.x<<endl;
 		cam.mMove = true;
 	}
 	else
 		cam.mMove = false;
+}
+
+void Player::setForward()
+{
+	//set new forward vector
+	forward = pos;
+	forward -= cam.camPos;
+	forward.normalize();
 }
 
 void Player::mouse(const float &rotx, const float& roty)

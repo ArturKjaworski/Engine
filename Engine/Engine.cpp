@@ -84,7 +84,10 @@ void render()
 	////character
 	glColor3f(0, 0, 1);
 	glPushMatrix();
+	
 	glTranslatef(-player.getPos('x'), -player.getPos('y'), -player.getPos('z'));
+	glRotatef(90, 0, 1, 0);
+	glRotatef(-player.getRot('x'), 0, 1, 0);
 	glutSolidTeapot(.1);
 	glPopMatrix();
 
@@ -117,28 +120,39 @@ void keyboard(unsigned char key, int x, int y)
 			break;
 				
 		case 'w':
-			player.move(0, 0, 0.1);
-			cout << player.getPos('z')<<endl;
+			player.move(Player::front,1);
+			
 			break;
 
 		case 's':
-			player.move(0, 0, -0.1);
+			player.move(Player::back,1);
 			break;
 
 		case 'a':
-			player.move(.1, 0, 0);
+			player.move(Player::left, 1);
 		
 			break;
 
 		case 'd':
-			player.move(-.1, 0, 0);
+			player.move(Player::right, 1);
 			break;
-		case 'z':
-			player.move(0, .1, 0);
+		
+		case 'W':
+			player.move(Player::front, 2);
+
 			break;
 
-		case 'x':
-			player.move(0, -.1, 0);
+		case 'S':
+			player.move(Player::back, 2);
+			break;
+
+		case 'A':
+			player.move(Player::left, 2);
+
+			break;
+
+		case 'D':
+			player.move(Player::right, 2);
 			break;
 
 		case 'Q':
@@ -158,8 +172,10 @@ void mouse(int but, int state, int x, int y)
 		down = true;
 
 	if (but == GLUT_RIGHT_BUTTON && state == GLUT_UP)
+	{
+		player.setForward();
 		down = false;
-
+	}
 	if (but == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 		cout << "fail" << endl;
 }
@@ -167,9 +183,8 @@ void mouse(int but, int state, int x, int y)
 //look around
 void mouseMove(int x, int y)
 {
-	//if (down)
+	if (down)
 	player.mouse(x - width / 2, y - height / 2);
-	
 }
 
 //move in that direction
@@ -181,7 +196,6 @@ void passiveMouseMove(int x, int y)
 void timer(int val)
 {
 	render();
-	
 	glutTimerFunc(val,timer,val);
 }
 
@@ -202,9 +216,9 @@ int main(int argc, char *argv[])
 	glutMouseFunc(mouse);
 	glutMotionFunc(mouseMove);
 	glutPassiveMotionFunc(passiveMouseMove);
-
+	
 	glutWarpPointer(width / 2, height / 2);
-	//glutSetCursor(GLUT_CURSOR_NONE);
+	glutSetCursor(GLUT_CURSOR_NONE);
 	
 	glutTimerFunc(1000 / 120, timer, 0);
 	glutMainLoop();

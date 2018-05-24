@@ -20,8 +20,17 @@ private:
 	Vec3 forward;
 public:
 
-	void move(const float&, const float&, const float&);
+	enum Dir
+	{
+		front, 
+		back, 
+		left, 
+		right 
+	};
+
+	void move(Dir, const int&);
 	void look(const float&, const float&);
+	void setForward();
 	void mouse(const float&, const float&);
 	void shoot(const Vec3&);
 
