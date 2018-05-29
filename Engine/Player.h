@@ -11,6 +11,7 @@ public:
 	int hp;
 	int stamina;
 	int mana;
+	int speed;
 
 	Camera cam;
 
@@ -27,15 +28,23 @@ public:
 		left, 
 		right 
 	};
+	enum state
+	{
+		walk,
+		run,
+		swim,
+		crouch
+	};
 
-	void move(Dir, const int&);
+	void move(Dir);
 	void look(const float&, const float&);
 	void setForward();
 	void mouse(const float&, const float&);
 	void shoot(const Vec3&);
 
+	void chState(state);
 	void onDeath();
-	void getHit(int);
+	void getHit(int&);
 
 	void interact();
 

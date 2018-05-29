@@ -20,7 +20,7 @@ Camera::~Camera()
 {
 }
 
-//On HIATUS || glut dont provide wheel func
+//On HIATUS | glut doesnt have wheel func
 void Camera::zoomout(Vec3 v)
 {
 	--camDist;
@@ -34,7 +34,7 @@ void Camera::zoomin(Vec3 v)
 	v.normalize();
 	camPos -= v * camDist;
 }
-
+///////////
 void Camera::mouse(const float& rotx, const float& roty,const Vec3& pos)
 {
 	//look around

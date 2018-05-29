@@ -6,13 +6,12 @@ Player::Player()
 	hp = 100;
 	stamina = 100;
 	mana = 100;
-
+	speed = 1;
 	cam = Camera();
 
 	pos = Vec3();
 	rot = Vec3();
 	forward = Vec3();
-
 }
 
 Player::~Player()
@@ -20,24 +19,113 @@ Player::~Player()
 
 }
 
-void Player::move(Dir dir,const int& speed)
+void Player::move(Dir dir)
 {
+	
+	Vec3 v(forward.x, 0, forward.z);
+	v.normalize();
+
 	switch (dir)
 	{
-	case front:
-		pos.x += forward.x*speed;
-		pos.z += forward.z*speed;
-		cam.camPos.x += forward.x*speed;
-		cam.camPos.z += forward.z*speed;;
-		break;
-	case back:
-		pos.x -= forward.x*speed;
-		pos.z -= forward.z*speed;
-		cam.camPos.x -= forward.x*speed;;
-		cam.camPos.z -= forward.z*speed;;
-		break;
-	}
+		case front:
+		{
+			pos += v;
+			cam.camPos += v;
+			break;
+		}
 
+		case back:
+		{
+			pos -= v;
+			cam.camPos -= v;
+			break;
+		}
+
+		case left:
+		{
+			//x^2 + z^2 = 1		 \   (x and z normalized)
+			//					  |
+			//v.x*x + v.z*z = 0  / 
+
+			float xpow2 = pow(v.z, 2) / (pow(v.z, 2) + pow(v.x, 2));       
+
+			//I			
+			if (v.z >= 0 && v.x >= 0)
+			{
+				pos.x += sqrt(xpow2)*speed;
+				pos.z -= sqrt(1 - xpow2)*speed;
+				cam.camPos.x += sqrt(xpow2)*speed;
+				cam.camPos.z -= sqrt(1 - xpow2)*speed;
+			}
+			//II
+			if (v.z >= 0 && v.x < 0)
+			{
+				pos.x += sqrt(xpow2)*speed;
+				pos.z += sqrt(1 - xpow2)*speed;
+				cam.camPos.x += sqrt(xpow2)*speed;
+				cam.camPos.z += sqrt(1 - xpow2)*speed;
+			}
+			//III
+			if (v.z < 0 && v.x < 0)
+			{
+				pos.x -= sqrt(xpow2)*speed;
+				pos.z += sqrt(1 - xpow2)*speed;
+				cam.camPos.x -= sqrt(xpow2)*speed;
+				cam.camPos.z += sqrt(1 - xpow2)*speed;
+			}
+			//IV
+			if (v.z < 0 && v.x >= 0)
+			{
+				pos.x -= sqrt(xpow2)*speed;
+				pos.z -= sqrt(1 - xpow2)*speed;
+				cam.camPos.x -= sqrt(xpow2)*speed;
+				cam.camPos.z -= sqrt(1 - xpow2)*speed;
+			}
+			break;
+		}
+	
+		case right:
+		{
+			//x^2 + z^2 = 1		 \   (x and z normalized)
+			//					  |
+			//v.x*x + v.z*z = 0  / 
+
+			float xpow2 = pow(v.z, 2) / (pow(v.z, 2) + pow(v.x, 2));
+			//I
+			if (v.z >= 0 && v.x >= 0)
+			{
+				pos.x -= sqrt(xpow2)*speed;
+				pos.z += sqrt(1 - xpow2)*speed;
+				cam.camPos.x -= sqrt(xpow2)*speed;
+				cam.camPos.z += sqrt(1 - xpow2)*speed;
+			}
+			//II
+			if (v.z >= 0 && v.x < 0)
+			{
+				pos.x -= sqrt(xpow2)*speed;
+				pos.z -= sqrt(1 - xpow2)*speed;
+				cam.camPos.x -= sqrt(xpow2)*speed;
+				cam.camPos.z -= sqrt(1 - xpow2)*speed;
+			}
+			//III
+			if (v.z < 0 && v.x < 0)
+			{
+				pos.x += sqrt(xpow2)*speed;
+				pos.z -= sqrt(1 - xpow2)*speed;
+				cam.camPos.x += sqrt(xpow2)*speed;
+				cam.camPos.z -= sqrt(1 - xpow2)*speed;
+			}
+			//IV
+			if (v.z < 0 && v.x >= 0)
+			{
+				pos.x += sqrt(xpow2)*speed;
+				pos.z += sqrt(1 - xpow2)*speed;
+				cam.camPos.x += sqrt(xpow2)*speed;
+				cam.camPos.z += sqrt(1 - xpow2)*speed;
+			}
+			break;
+		}
+	}
 }
 
 void Player::look(const float& x, const float& y)
@@ -51,8 +139,6 @@ void Player::look(const float& x, const float& y)
 
 		cam.mouse(x, y, pos);
 		setForward();
-
-		cout<< "? "<< forward.x<<endl;
 		cam.mMove = true;
 	}
 	else
@@ -65,6 +151,7 @@ void Player::setForward()
 	forward = pos;
 	forward -= cam.camPos;
 	forward.normalize();
+	rot = cam.camRot;
 }
 
 void Player::mouse(const float &rotx, const float& roty)
@@ -80,12 +167,47 @@ void Player::shoot(const Vec3& v)
 
 }
 
+void Player::chState(state state)
+{
+	switch (state)
+	{
+	case state::walk:
+		if (speed != 1)
+		speed = 1;
+		break;
+		
+	case state::run:
+		if (speed != 1)
+		{
+			speed = 1;
+			speed *= 2;
+		}
+		break;
+
+	case state::swim:
+		if (speed != 0)
+		{
+			speed = 1;
+			speed *= .75;
+		}
+		break;
+
+	case state::crouch:
+		if (speed != 0)
+		{
+			speed = 1;
+			speed *= .5;
+		}
+		break;
+	}
+}
+
 void Player::onDeath()
 {
 	cout << "You Died :)";
 }
 
-void Player::getHit(int val)
+void Player::getHit(int& val)
 {
 	hp -= val;
 	if (hp <= 0)

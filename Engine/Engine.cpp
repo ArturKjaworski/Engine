@@ -24,20 +24,20 @@ void renderObj()
 	glColor3f(0, 1, 0);
 	glPushMatrix();
 		glBegin(GL_QUADS);
-		glVertex3f(-10, -1, -10);
-		glVertex3f(10, -1, -10);
-		glVertex3f(10, -1, 10);
-		glVertex3f(-10, -1, 10);
+		glVertex3f(-100, -1, -100);
+		glVertex3f(100, -1, -100);
+		glVertex3f(100, -1, 100);
+		glVertex3f(-100, -1, 100);
 		glEnd();
 	glPopMatrix();
 	
 	glColor3f(0, 1, 1);
 	glPushMatrix();
 	glBegin(GL_QUADS);
-		glVertex3f(-10, 10, -10);
-		glVertex3f(10, 10, -10);
-		glVertex3f(10, 10, 10);
-		glVertex3f(-10, 10, 10);
+		glVertex3f(-100, 10, -100);
+		glVertex3f(100, 10, -100);
+		glVertex3f(100, 10, 100);
+		glVertex3f(-100, 10, 100);
 	glEnd();
 	glPopMatrix();
 	////////
@@ -45,26 +45,26 @@ void renderObj()
 	glColor3f(1, 0, 0);
 
 	glPushMatrix();
-	glTranslatef(0, 0.0, -5);
-	glutSolidCube(.05);
+	glTranslatef(0, 0.0, -50);
+	glutSolidCube(.5);
 	glPopMatrix();
 
 	glColor3f(0, 0, 1);
 	glPushMatrix();
-	glTranslatef(0, 0.0, 5);
-	glutSolidCube(.05);
+	glTranslatef(0, 0.0, 50);
+	glutSolidCube(.5);
 	glPopMatrix();
 
 	glColor3f(0, 1, 1);
 	glPushMatrix();
-	glTranslatef(5, 0.0, 0);
-	glutSolidCube(.05);
+	glTranslatef(50, 0.0, 0);
+	glutSolidCube(.5);
 	glPopMatrix();
 
 	glColor3f(1, 1, 0);
 	glPushMatrix();
-	glTranslatef(-5, 0.0, 0);
-	glutSolidCube(.05);
+	glTranslatef(-50, 0.0, 0);
+	glutSolidCube(.5);
 	glPopMatrix();
 	////////
 }
@@ -106,6 +106,20 @@ void reshape(int x, int y)
 
 void keyboard(unsigned char key, int x, int y)
 {
+	int state = glutGetModifiers();
+	switch (state)
+	{
+	case GLUT_ACTIVE_SHIFT:
+		player.chState(Player::run);
+		break;
+	case !GLUT_ACTIVE_SHIFT:
+
+		player.chState(Player::walk);
+		break;
+
+	}
+	
+
 	switch (key)
 	{
 		case '1':
@@ -120,39 +134,39 @@ void keyboard(unsigned char key, int x, int y)
 			break;
 				
 		case 'w':
-			player.move(Player::front,1);
+			player.move(Player::front);
 			
 			break;
 
 		case 's':
-			player.move(Player::back,1);
+			player.move(Player::back);
 			break;
 
 		case 'a':
-			player.move(Player::left, 1);
+			player.move(Player::left);
 		
 			break;
 
 		case 'd':
-			player.move(Player::right, 1);
+			player.move(Player::right);
 			break;
 		
 		case 'W':
-			player.move(Player::front, 2);
+			player.move(Player::front);
 
 			break;
 
 		case 'S':
-			player.move(Player::back, 2);
+			player.move(Player::back);
 			break;
 
 		case 'A':
-			player.move(Player::left, 2);
+			player.move(Player::left);
 
 			break;
 
 		case 'D':
-			player.move(Player::right, 2);
+			player.move(Player::right);
 			break;
 
 		case 'Q':
@@ -165,7 +179,10 @@ void keyboard(unsigned char key, int x, int y)
 			break;
 	}
 }
-
+void keypressed(int key, int x, int y)
+{
+	//if (key == GLUT_SHIFT)
+}
 void mouse(int but, int state, int x, int y)
 {
 	if (but == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
@@ -216,6 +233,7 @@ int main(int argc, char *argv[])
 	glutMouseFunc(mouse);
 	glutMotionFunc(mouseMove);
 	glutPassiveMotionFunc(passiveMouseMove);
+	glutSpecialFunc(keypressed);
 	
 	glutWarpPointer(width / 2, height / 2);
 	glutSetCursor(GLUT_CURSOR_NONE);

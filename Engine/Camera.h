@@ -13,8 +13,9 @@ public:
 
 	Vec3 camPos;
 	Vec3 camRot;
-
+private:
 	float camDist;
+public:
 	bool mMove;
 
 	void zoomout(Vec3 v);

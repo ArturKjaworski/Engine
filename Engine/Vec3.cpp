@@ -42,9 +42,9 @@ Vec3& Vec3::operator+(const Vec3& v)
 
 Vec3& Vec3::operator+=(const Vec3& v)
 {
-	x -= v.x;
-	y -= v.y;
-	z -= v.z;
+	x += v.x;
+	y += v.y;
+	z += v.z;
 	return *this;
 }
 
@@ -115,6 +115,14 @@ Vec3& Vec3::operator/(const Vec3& v)
 	tmp.x /= v.x;
 	tmp.y /= v.y;
 	tmp.z /= v.z;
+
+	if (v.x == 0)
+		cout << "\n You cannot divide by 0 (X field)";
+	if (v.y == 0)
+		cout << "\n You cannot divide by 0 (Y field)";
+	if (v.z == 0)
+		cout << "\n You cannot divide by 0 (Z field)";
+
 	return tmp;
 }
 
