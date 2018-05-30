@@ -6,25 +6,30 @@
 
 class Camera
 {
+	friend class Player;
+
 public:
 	Camera();
 	Camera(int);
 	~Camera();
 
-	Vec3 camPos;
-	Vec3 camRot;
-private:
-	float camDist;
-public:
-	bool mMove;
+	enum camType
+	{
+		FPP,
+		TPP
+	}; 
+	camType camType;
 
-	void zoomout(Vec3 v);
-	void zoomin(Vec3 v);
-
-	void mouse(const float&, const float&, const Vec3&);
-	void keyboard(Vec3& v);
 
 	float getRot(const char&);
 	float getPos(const char&);
+
+private:
+	Vec3 camPos;
+	Vec3 camRot;
+	float camDist;
+	bool mMove;
+	void zoom(Vec3&, const int&);
+	void mouse(const float&, const float&, const Vec3&);
 };
 

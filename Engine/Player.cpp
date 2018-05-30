@@ -7,7 +7,7 @@ Player::Player()
 	stamina = 100;
 	mana = 100;
 	speed = 1;
-	cam = Camera();
+	cam = Camera(1);
 
 	pos = Vec3();
 	rot = Vec3();
@@ -165,6 +165,20 @@ void Player::shoot(const Vec3& v)
 	Vec3 norm = v;
 	norm.normalize();
 
+}
+
+void Player::zoom(const char& val)
+{
+	switch (val)
+	{
+	case '+':
+		cam.zoom(forward,1);
+		break;
+
+	case '-':
+		cam.zoom(forward * -1, -1);
+		break;
+	}
 }
 
 void Player::chState(state state)

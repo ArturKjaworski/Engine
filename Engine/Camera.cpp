@@ -4,37 +4,54 @@
 
 Camera::Camera()
 {
-	camDist = 1;
+	camDist = 0;
 	mMove = false;
 
 	camRot = Vec3(0,125,0);
 	camPos = Vec3();
+	if (camDist > 0)
+		camType = TPP;
+	else
+		camType = FPP;
 }
 
 Camera::Camera(int dist)
 {
 	camDist = dist;
+	mMove = false;
+
+	camRot = Vec3(0, 125, 0);
+	camPos = Vec3();
+
+	if (camDist > 0)
+		camType = TPP;
+	else
+		camType = FPP;
 }
 
 Camera::~Camera()
 {
 }
 
-//On HIATUS | glut doesnt have wheel func
-void Camera::zoomout(Vec3 v)
+//on key for now.
+void Camera::zoom(Vec3& v, const int& val)
 {
-	--camDist;
-	v.normalize();
-	camPos -= v * camDist;
+	camDist+=val;
+	if (camDist <= 0)
+	{
+		camDist = 0;
+		if (camType != FPP)
+			camType = FPP;
+	}
+	else
+	{
+		if (camType != TPP)
+			camType = TPP;
+
+		camPos += v * camDist;
+	}
 }
 
-void Camera::zoomin(Vec3 v)
-{
-	++camDist;
-	v.normalize();
-	camPos -= v * camDist;
-}
-///////////
 void Camera::mouse(const float& rotx, const float& roty,const Vec3& pos)
 {
 	//look around
@@ -49,10 +66,18 @@ void Camera::mouse(const float& rotx, const float& roty,const Vec3& pos)
 	if (camRot.y < 0)
 		camRot.y = 0;
 
+	if (camDist != 0)
+	{
 		camPos.x = camDist * sin(camRot.x*PI / 180) + pos.x;
 		camPos.z = camDist * -cos(camRot.x*PI / 180) + pos.z;
-
-		camPos.y = camDist* cos(camRot.y*PI / 180) + pos.y;
+		camPos.y = camDist * cos(camRot.y*PI / 180) + pos.y;
+	}
+	else
+	{
+		camPos.x = 0.001 * sin(camRot.x*PI / 180) + pos.x;
+		camPos.z = 0.001 * -cos(camRot.x*PI / 180) + pos.z;
+		camPos.y = 0.001 * cos(camRot.y*PI / 180) + pos.y;
+	}
 
 		if (camPos.y >= 1)
 			camPos.y = 1;
@@ -64,10 +89,6 @@ void Camera::mouse(const float& rotx, const float& roty,const Vec3& pos)
 		mMove = false;
 
 	
-}
-
-void Camera::keyboard(Vec3 & v)
-{
 }
 
 float Camera::getRot(const char &op)

@@ -17,6 +17,8 @@
 #include <windows.h>
 
 #define PI 3.1415
+
+
 using namespace std;
 
 // TODO: W tym miejscu odwo³aj siê do dodatkowych nag³ówków wymaganych przez program

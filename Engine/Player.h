@@ -8,6 +8,7 @@ public:
 	Player();
 	~Player();
 
+
 	int hp;
 	int stamina;
 	int mana;
@@ -34,13 +35,14 @@ public:
 		run,
 		swim,
 		crouch
-	};
+	}; 
 
 	void move(Dir);
 	void look(const float&, const float&);
 	void setForward();
 	void mouse(const float&, const float&);
 	void shoot(const Vec3&);
+	void zoom(const char&);
 
 	void chState(state);
 	void onDeath();

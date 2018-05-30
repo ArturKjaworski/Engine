@@ -4,6 +4,7 @@
 
 #define width 920
 #define height 640
+
 //Interactable_Obj* ob;		
 //PickUp_Obj* obj;
 Player player;
@@ -80,17 +81,18 @@ void render()
 		-player.getPos('x'), -player.getPos('y'), -player.getPos('z'),
 		0, 1, 0);
 
+
 	renderObj();
 	////character
-	glColor3f(0, 0, 1);
-	glPushMatrix();
-	
-	glTranslatef(-player.getPos('x'), -player.getPos('y'), -player.getPos('z'));
-	glRotatef(90, 0, 1, 0);
-	glRotatef(-player.getRot('x'), 0, 1, 0);
-	glutSolidTeapot(.1);
-	glPopMatrix();
-
+	if (player.cam.camType == Camera::TPP)
+	{
+		glColor3f(0, 0, 1);
+		glPushMatrix();
+			glTranslatef(-player.getPos('x'), -player.getPos('y'), -player.getPos('z'));
+			glRotatef(90-player.getRot('x'), 0, 1, 0);
+			glutSolidTeapot(.1);
+		glPopMatrix();
+	}
 	glutSwapBuffers();
 }
 
@@ -106,19 +108,20 @@ void reshape(int x, int y)
 
 void keyboard(unsigned char key, int x, int y)
 {
+
 	int state = glutGetModifiers();
 	switch (state)
 	{
 	case GLUT_ACTIVE_SHIFT:
 		player.chState(Player::run);
 		break;
-	case !GLUT_ACTIVE_SHIFT:
-
+	case GLUT_ACTIVE_CTRL:
+		player.chState(Player::crouch);
+		break;
+	default:
 		player.chState(Player::walk);
 		break;
-
 	}
-	
 
 	switch (key)
 	{
@@ -133,39 +136,21 @@ void keyboard(unsigned char key, int x, int y)
 			cout << "\nInteract Obj added!\n";
 			break;
 				
-		case 'w':
+		case 'w': case 'W':
 			player.move(Player::front);
 			
 			break;
 
-		case 's':
+		case 's':case 'S':
 			player.move(Player::back);
 			break;
 
-		case 'a':
+		case 'a':case 'A':
 			player.move(Player::left);
 		
 			break;
 
-		case 'd':
-			player.move(Player::right);
-			break;
-		
-		case 'W':
-			player.move(Player::front);
-
-			break;
-
-		case 'S':
-			player.move(Player::back);
-			break;
-
-		case 'A':
-			player.move(Player::left);
-
-			break;
-
-		case 'D':
+		case 'd':case 'D':
 			player.move(Player::right);
 			break;
 
@@ -174,15 +159,18 @@ void keyboard(unsigned char key, int x, int y)
 		case 27:
 			exit(0);
 				
+		case 'x':
+			player.zoom('+');
+			break;
+		case 'z':
+			player.zoom('-');
+			break;
 		default:
 			intro();
 			break;
 	}
 }
-void keypressed(int key, int x, int y)
-{
-	//if (key == GLUT_SHIFT)
-}
+
 void mouse(int but, int state, int x, int y)
 {
 	if (but == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
@@ -194,7 +182,7 @@ void mouse(int but, int state, int x, int y)
 		down = false;
 	}
 	if (but == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
-		cout << "fail" << endl;
+		cout << "interact" << endl;
 }
 
 //look around
@@ -233,7 +221,6 @@ int main(int argc, char *argv[])
 	glutMouseFunc(mouse);
 	glutMotionFunc(mouseMove);
 	glutPassiveMotionFunc(passiveMouseMove);
-	glutSpecialFunc(keypressed);
 	
 	glutWarpPointer(width / 2, height / 2);
 	glutSetCursor(GLUT_CURSOR_NONE);
