@@ -15,6 +15,12 @@ void intro()
 	system("cls");
 	cout << "1: create PickUp Obj\n";
 	cout << "2: create Interct Obj\n";
+
+	cout << "w,s,a,d: movement\n";
+	cout << "z,x: zoom in/out\n";
+	cout << "\nMouse:\nhold RMB to looking around\nwithout anu btn: move in that direction\n";
+	cout << "LMB to interact (not working for now)\n";
+	
 	cout << "q: exit\n";
 }
 
@@ -22,7 +28,7 @@ void intro()
 void renderObj()
 {
 	//plain
-	glColor3f(0, 1, 0);
+	glColor4f(0, 1, 0,1);
 	glPushMatrix();
 		glBegin(GL_QUADS);
 		glVertex3f(-100, -1, -100);
@@ -32,7 +38,7 @@ void renderObj()
 		glEnd();
 	glPopMatrix();
 	
-	glColor3f(0, 1, 1);
+	glColor4f(0, 1, 1,1);
 	glPushMatrix();
 	glBegin(GL_QUADS);
 		glVertex3f(-100, 10, -100);
@@ -43,29 +49,30 @@ void renderObj()
 	glPopMatrix();
 	////////
 	//cubes
-	glColor3f(1, 0, 0);
+	float s = 2;
+	glColor4f(1, 0, 0,1);
 
 	glPushMatrix();
 	glTranslatef(0, 0.0, -50);
-	glutSolidCube(.5);
+	glutSolidCube(s);
 	glPopMatrix();
 
 	glColor3f(0, 0, 1);
 	glPushMatrix();
 	glTranslatef(0, 0.0, 50);
-	glutSolidCube(.5);
+	glutSolidCube(s);
 	glPopMatrix();
 
 	glColor3f(0, 1, 1);
 	glPushMatrix();
 	glTranslatef(50, 0.0, 0);
-	glutSolidCube(.5);
+	glutSolidCube(s);
 	glPopMatrix();
 
 	glColor3f(1, 1, 0);
 	glPushMatrix();
 	glTranslatef(-50, 0.0, 0);
-	glutSolidCube(.5);
+	glutSolidCube(s);
 	glPopMatrix();
 	////////
 }
@@ -76,23 +83,26 @@ void render()
 	glClearColor(1.0, 1.0, 1.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-	
+
 	gluLookAt(-player.cam.getPos('x'), -player.cam.getPos('y'), -player.cam.getPos('z'),
 		-player.getPos('x'), -player.getPos('y'), -player.getPos('z'),
 		0, 1, 0);
+
 
 
 	renderObj();
 	////character
 	if (player.cam.camType == Camera::TPP)
 	{
-		glColor3f(0, 0, 1);
+		glColor4f(0, 0, 1, player.getAlpha());
 		glPushMatrix();
 			glTranslatef(-player.getPos('x'), -player.getPos('y'), -player.getPos('z'));
 			glRotatef(90-player.getRot('x'), 0, 1, 0);
-			glutSolidTeapot(.1);
+			glutSolidTeapot(1);
 		glPopMatrix();
 	}
+	
+	
 	glutSwapBuffers();
 }
 
@@ -114,7 +124,7 @@ void keyboard(unsigned char key, int x, int y)
 	{
 	case GLUT_ACTIVE_SHIFT:
 		player.chState(Player::run);
-		break;
+		break; 
 	case GLUT_ACTIVE_CTRL:
 		player.chState(Player::crouch);
 		break;
@@ -128,7 +138,6 @@ void keyboard(unsigned char key, int x, int y)
 		case '1':
 			system("cls");
 		//	obj = new PickUp_Obj("qwe");
-			
 			break;
 
 		case '2':
@@ -198,10 +207,11 @@ void passiveMouseMove(int x, int y)
 	player.look(x - width / 2, y - height / 2);
 }
 
+
 void timer(int val)
 {
 	render();
-	glutTimerFunc(val,timer,val);
+	glutTimerFunc(val,timer,0);
 }
 
 int main(int argc, char *argv[])
@@ -213,7 +223,7 @@ int main(int argc, char *argv[])
 	glutInitWindowSize(width, height);
 	glutInitWindowPosition(1920-width, 1080-height);
 	glutCreateWindow("FPP");
-	
+
 	glutDisplayFunc(render);
 	glutReshapeFunc(reshape);
 
@@ -222,10 +232,13 @@ int main(int argc, char *argv[])
 	glutMotionFunc(mouseMove);
 	glutPassiveMotionFunc(passiveMouseMove);
 	
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	glutWarpPointer(width / 2, height / 2);
 	glutSetCursor(GLUT_CURSOR_NONE);
 	
-	glutTimerFunc(1000 / 120, timer, 0);
+	glutTimerFunc(1000 / 120, timer,0);
 	glutMainLoop();
     return 0;
 }

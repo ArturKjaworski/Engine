@@ -16,10 +16,13 @@ public:
 
 	Camera cam;
 
+	
 private:
 	Vec3 pos;
 	Vec3 rot;
 	Vec3 forward;
+	float alpha;
+	
 public:
 
 	enum Dir
@@ -29,13 +32,14 @@ public:
 		left, 
 		right 
 	};
-	enum state
+	enum stat
 	{
+		idle,
 		walk,
 		run,
-		swim,
+		swim,      //wrong state, cus can be swim + run = fast swimming etc. ?
 		crouch
-	}; 
+	}; stat state;
 
 	void move(Dir);
 	void look(const float&, const float&);
@@ -44,7 +48,7 @@ public:
 	void shoot(const Vec3&);
 	void zoom(const char&);
 
-	void chState(state);
+	void chState(stat);
 	void onDeath();
 	void getHit(int&);
 
@@ -52,6 +56,6 @@ public:
 
 	float getRot(const char&);
 	float getPos(const char&);
-
+	float getAlpha();
 };
 

@@ -7,11 +7,14 @@ Player::Player()
 	stamina = 100;
 	mana = 100;
 	speed = 1;
-	cam = Camera(1);
+	state = idle;
+
+	cam = Camera(10);
 
 	pos = Vec3();
 	rot = Vec3();
 	forward = Vec3();
+	alpha = cam.camDist > 4 ? 1 : 0.5;
 }
 
 Player::~Player()
@@ -25,12 +28,19 @@ void Player::move(Dir dir)
 	Vec3 v(forward.x, 0, forward.z);
 	v.normalize();
 
+	//x^2 + z^2 = 1		 \   (x and z normalized)
+	//					  |
+	//v.x*x + v.z*z = 0  / 
+
+	float xpow2 = pow(v.z, 2) / (pow(v.z, 2) + pow(v.x, 2));
+
 	switch (dir)
 	{
 		case front:
 		{
 			pos += v;
 			cam.camPos += v;
+			v.x*v.z<0 ? cam.camMovement(xpow2,speed) : cam.camMovement(-xpow2, speed);
 			break;
 		}
 
@@ -38,17 +48,12 @@ void Player::move(Dir dir)
 		{
 			pos -= v;
 			cam.camPos -= v;
+			v.x*v.z<0 ? cam.camMovement(xpow2, speed) : cam.camMovement(-xpow2, speed);
 			break;
 		}
 
 		case left:
 		{
-			//x^2 + z^2 = 1		 \   (x and z normalized)
-			//					  |
-			//v.x*x + v.z*z = 0  / 
-
-			float xpow2 = pow(v.z, 2) / (pow(v.z, 2) + pow(v.x, 2));       
-
 			//I			
 			if (v.z >= 0 && v.x >= 0)
 			{
@@ -86,11 +91,6 @@ void Player::move(Dir dir)
 	
 		case right:
 		{
-			//x^2 + z^2 = 1		 \   (x and z normalized)
-			//					  |
-			//v.x*x + v.z*z = 0  / 
-
-			float xpow2 = pow(v.z, 2) / (pow(v.z, 2) + pow(v.x, 2));
 			//I
 			if (v.z >= 0 && v.x >= 0)
 			{
@@ -137,7 +137,7 @@ void Player::look(const float& x, const float& y)
 		rot.x += x;
 		rot.y += y;
 
-		cam.mouse(x, y, pos);
+		cam.look(x, y, pos);
 		setForward();
 		cam.mMove = true;
 	}
@@ -152,11 +152,14 @@ void Player::setForward()
 	forward -= cam.camPos;
 	forward.normalize();
 	rot = cam.camRot;
+
+	system("cls");
+	cout << speed;
 }
 
 void Player::mouse(const float &rotx, const float& roty)
 {
-	cam.mouse(rotx, roty, pos);
+	cam.look(rotx, roty, pos);
 }
 
 void Player::shoot(const Vec3& v)
@@ -172,46 +175,45 @@ void Player::zoom(const char& val)
 	switch (val)
 	{
 	case '+':
-		cam.zoom(forward,1);
+		alpha = cam.zoom(forward,1);
 		break;
 
 	case '-':
-		cam.zoom(forward * -1, -1);
+		alpha = cam.zoom(forward * -1, -1);
 		break;
 	}
+	cam.look(pos);
 }
 
-void Player::chState(state state)
+void Player::chState(stat state)
 {
 	switch (state)
 	{
-	case state::walk:
+	case idle:
+		state = idle;
+		break;
+	case walk:
+		state = walk;
 		if (speed != 1)
-		speed = 1;
+			speed = 1;
 		break;
 		
-	case state::run:
-		if (speed != 1)
-		{
-			speed = 1;
-			speed *= 2;
-		}
+	case run:
+		state = run;
+		if (speed != 2)
+			speed = 2;
 		break;
 
-	case state::swim:
-		if (speed != 0)
-		{
-			speed = 1;
-			speed *= .75;
-		}
+	case swim:
+		state = swim;
+		if (speed != 1.75)
+			speed = 1.75;
 		break;
 
-	case state::crouch:
-		if (speed != 0)
-		{
-			speed = 1;
-			speed *= .5;
-		}
+	case crouch:
+		state = crouch;
+		if (speed != 1.5)
+			speed = 1.5;
 		break;
 	}
 }
@@ -264,4 +266,9 @@ float Player::getPos(const char &op)
 
 	}
 	return NULL;
+}
+
+float Player::getAlpha()
+{
+	return alpha;
 }

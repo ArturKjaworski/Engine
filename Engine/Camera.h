@@ -29,7 +29,14 @@ private:
 	Vec3 camRot;
 	float camDist;
 	bool mMove;
-	void zoom(Vec3&, const int&);
-	void mouse(const float&, const float&, const Vec3&);
+	bool nStep;		//bool for camera movement when moving
+
+	float zoom(Vec3&, const int&);
+	void look(const float&, const float&, const Vec3&);
+	void look(const Vec3&);
+	void camMovement(const float&, const float&);
+
+	void moveTimer();
+
 };
 

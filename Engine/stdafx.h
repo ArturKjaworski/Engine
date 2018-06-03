@@ -14,6 +14,7 @@
 #include "string"
 #include <GL/glut.h>
 #include <GL/gl.h>
+#include <time.h>
 #include <windows.h>
 
 #define PI 3.1415
