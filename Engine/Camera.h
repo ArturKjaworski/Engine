@@ -21,8 +21,8 @@ public:
 	camType camType;
 
 
-	float getRot(const char&);
-	float getPos(const char&);
+	Vec3 getRot();
+	Vec3 getPos();
 
 private:
 	Vec3 camPos;
@@ -31,7 +31,7 @@ private:
 	bool mMove;
 	bool nStep;		//bool for camera movement when moving
 
-	float zoom(Vec3&, const int&);
+	float zoom(const Vec3&, const int&);
 	void look(const float&, const float&, const Vec3&);
 	void look(const Vec3&);
 	void camMovement(const float&, const float&);

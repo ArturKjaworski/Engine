@@ -3,11 +3,16 @@
 class PickUp_Obj :	public Interactable_Obj
 {
 public:
-	int amount;
-
 	PickUp_Obj();
-	PickUp_Obj(string);
+	PickUp_Obj(const string);
+	PickUp_Obj(const float&, const float&, const float&, string);
+	PickUp_Obj(const Vec3&, const string);
+	~PickUp_Obj();
+	int amount;
+	
+public:
+	void interact() override;
 
-	virtual void interact() override;
+
 };
 

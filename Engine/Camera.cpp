@@ -29,7 +29,7 @@ Camera::~Camera()
 }
 
 //on key for now.
-float Camera::zoom(Vec3& v, const int& val)
+float Camera::zoom(const Vec3& v, const int& val)
 {
 	camDist+=val;
 	if (camDist <= 0)
@@ -155,35 +155,13 @@ void Camera::moveTimer()
 	}
 }
 
-float Camera::getRot(const char &op)
+Vec3 Camera::getRot()
 {
-	switch (op)
-	{
-	case 'X': case 'x':
-		return camRot.x;
-		break;
-	case 'Y': case 'y':
-		return camRot.y;
-		break;
-	}
-	return NULL;
+	return camRot;
 }
 
-float Camera::getPos(const char &op)
+Vec3 Camera::getPos()
 {
-	switch (op)
-	{
-	case 'X': case 'x':
-		return camPos.x;
-		break;
-
-	case 'Y': case 'y':
-		return camPos.y;
-
-	case 'Z': case 'z':
-		return camPos.z;
-		break;
-	}
-	return NULL;
+	return camPos;
 }
 

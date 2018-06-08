@@ -1,13 +1,12 @@
 #pragma once
-#include "Vec3.h"
 #include "Camera.h"
 
 class Player
 {
 public:
 	Player();
+	Player(const float&);
 	~Player();
-
 
 	int hp;
 	int stamina;
@@ -16,15 +15,14 @@ public:
 
 	Camera cam;
 
-	
 private:
 	Vec3 pos;
 	Vec3 rot;
 	Vec3 forward;
 	float alpha;
-	
-public:
+	PxRigidBody* box;
 
+public:
 	enum Dir
 	{
 		front, 
@@ -43,19 +41,22 @@ public:
 
 	void move(Dir);
 	void look(const float&, const float&);
-	void setForward();
-	void mouse(const float&, const float&);
-	void shoot(const Vec3&);
 	void zoom(const char&);
+	void mouse(const float&, const float&);
 
-	void chState(stat);
-	void onDeath();
-	void getHit(int&);
-
+	void shoot(const Vec3&);
 	void interact();
+	void onDeath();
+	void getHit(const int&);
 
-	float getRot(const char&);
-	float getPos(const char&);
+	void setForward();
+	void setState(stat);
+	void setBox(PxRigidDynamic* actor);
+
+	Vec3 getRot();
+	Vec3 getPos();
+	Vec3 getforward();
 	float getAlpha();
+	PxRigidBody* getBox();
 };
 

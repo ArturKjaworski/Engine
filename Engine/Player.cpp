@@ -17,6 +17,21 @@ Player::Player()
 	alpha = cam.camDist > 4 ? 1 : 0.5;
 }
 
+Player::Player(const float& camDist)
+{
+	hp = 100;
+	stamina = 100;
+	mana = 100;
+	speed = 1;
+	state = idle;
+
+	cam = Camera(camDist);
+
+	pos = Vec3();
+	rot = Vec3();
+	forward = Vec3();
+	alpha = cam.camDist > 4 ? 1 : 0.5;
+}
 Player::~Player()
 {
 
@@ -152,9 +167,6 @@ void Player::setForward()
 	forward -= cam.camPos;
 	forward.normalize();
 	rot = cam.camRot;
-
-	system("cls");
-	cout << speed;
 }
 
 void Player::mouse(const float &rotx, const float& roty)
@@ -185,7 +197,7 @@ void Player::zoom(const char& val)
 	cam.look(pos);
 }
 
-void Player::chState(stat state)
+void Player::setState(stat state)
 {
 	switch (state)
 	{
@@ -218,12 +230,17 @@ void Player::chState(stat state)
 	}
 }
 
+void Player::setBox(PxRigidDynamic* actor)
+{
+	box = actor;
+}
+
 void Player::onDeath()
 {
 	cout << "You Died :)";
 }
 
-void Player::getHit(int& val)
+void Player::getHit(const int& val)
 {
 	hp -= val;
 	if (hp <= 0)
@@ -235,40 +252,27 @@ void Player::interact()
 
 }
 
-float Player::getRot(const char &op)
+Vec3 Player::getRot()
 {
-	switch (op)
-	{
-	case 'X': case 'x':
-		return rot.x;
-		break;
-	case 'Y': case 'y':
-		return rot.y;
-		break;
-	}
-	return NULL;
+	return rot;
 }
 
-float Player::getPos(const char &op)
+Vec3 Player::getPos()
 {
-	switch (op)
-	{
-	case 'X': case 'x':
-		return pos.x;
-		break;
+	return pos;
+}
 
-	case 'Y': case 'y':
-		return pos.y;
-
-	case 'Z': case 'z':
-		return pos.z;
-		break;
-
-	}
-	return NULL;
+Vec3 Player::getforward()
+{
+	return forward;
 }
 
 float Player::getAlpha()
 {
 	return alpha;
+}
+
+PxRigidBody* Player::getBox()
+{
+	return box;
 }
