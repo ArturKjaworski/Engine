@@ -1,17 +1,38 @@
 #include "stdafx.h"
-#include "Player.h"
+#include "player/Player.h"
 #include "PickUp_Obj.h"
-
+#include "graphics classes/Targa.hpp"
+#include "graphics classes/ThreeMaxLoader.h"
 
 int _width(920);
 int _height(640);
-	
-Player* player = new Player(10.0f);
-vector<PickUp_Obj*> PU_objects;
-PxRigidStatic* ground;
-PxRigidStatic* sky;
 
-bool down = false;
+#define obj_amount 1
+
+#pragma region tex & models
+
+GLuint tex[obj_amount+2];
+obj_type obj[obj_amount];
+
+GLint PU_Obj;
+#pragma endregion
+
+#pragma region global vars for world & player
+GLUquadricObj *sphere1;
+Player* player;
+vector<PickUp_Obj*> PU_objects;
+PxRigidStatic* ground, *sky;
+#pragma endregion
+
+#pragma region light vars
+GLfloat lightAmb[] = { 0.5, 0.5, 0.5, 1.0 };
+GLfloat lightDif[] = { 0.7, 0.7, 0.7, 1.0 };
+GLfloat lightSpec[] = { 1.0, 1.0, 1.0, 1 };
+GLfloat lightColor0[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+float l_pos1[] = {0,300,0,1};
+#pragma endregion
+
+bool down = false;      //bool for (not)pressed RMB button check
 
 #pragma region Physx
 static PxDefaultErrorCallback gDefaultErrorCallback;
@@ -23,9 +44,9 @@ PxPhysics*				gPhysics = NULL;
 PxDefaultCpuDispatcher*	gDispatcher = NULL;
 PxScene*				gScene = NULL;
 
-PxRigidDynamic* createDActor(const PxGeometry& geometry, PxVec3& pos)
+PxRigidDynamic* createDActor(PxVec3& pos, const float& angle,const PxVec3& axis, const PxGeometry& geometry)
 {
-	PxQuat kwat(0, PxVec3(0, 0, 1));
+	PxQuat kwat(angle*PI/180, axis);
 	PxTransform t(pos, kwat);
 
 	PxMaterial* m = gPhysics->createMaterial(0.5,0.5,0.5);
@@ -34,9 +55,9 @@ PxRigidDynamic* createDActor(const PxGeometry& geometry, PxVec3& pos)
 	return actor;
 }
 
-PxRigidStatic* createSActor(const PxGeometry& geometry, PxVec3& pos)
+PxRigidStatic* createSActor(PxVec3& pos, const float& angle, const PxVec3& axis, const PxGeometry& geometry)
 {
-	PxQuat kwat(0, PxVec3(0,0,1));
+	PxQuat kwat(angle*PI / 180, axis);
 	PxTransform t(pos, kwat);
 
 	PxMaterial* m = gPhysics->createMaterial(.5f, .5f, .5f);
@@ -47,9 +68,56 @@ PxRigidStatic* createSActor(const PxGeometry& geometry, PxVec3& pos)
 }
 #pragma endregion
 
+bool loadTex(const int& id, char* path)
+{
+	glBindTexture(GL_TEXTURE_2D, tex[id]);
+	if (!LoadTGATexture(path))
+	{
+		puts("blad podczas wczytywania tekstury");
+		return false;
+	}
+	return true;
+}
+
+void compileModel(const obj_type& object, const int& texId)
+{
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, texId+1);
+	
+	glBegin(GL_TRIANGLES);
+	for (int l_index = 0; l_index<object.polygons_qty; l_index++)
+	{
+		glTexCoord2f(object.mapcoord[object.polygon[l_index].a].u,
+			object.mapcoord[object.polygon[l_index].a].v);
+		glVertex3f(object.vertex[object.polygon[l_index].a].x, object.vertex[object.polygon[l_index].a].y, object.vertex[object.polygon[l_index].a].z);
+
+		glTexCoord2f(object.mapcoord[object.polygon[l_index].b].u,
+			object.mapcoord[object.polygon[l_index].b].v);
+		glVertex3f(object.vertex[object.polygon[l_index].b].x, object.vertex[object.polygon[l_index].b].y, object.vertex[object.polygon[l_index].b].z);
+
+		glTexCoord2f(object.mapcoord[object.polygon[l_index].c].u,
+			object.mapcoord[object.polygon[l_index].c].v);
+		glVertex3f(object.vertex[object.polygon[l_index].c].x, object.vertex[object.polygon[l_index].c].y, object.vertex[object.polygon[l_index].c].z);
+	}
+	glEnd();
+}
+
 void init()
 {
-	//Physx
+#pragma region enable
+	glEnable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_NORMALIZE);
+	glEnable(GL_COLOR_MATERIAL);
+	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+#pragma endregion
+
+#pragma region Physx init
 	gFoundation = PxCreateFoundation(PX_FOUNDATION_VERSION, gDefaultAllocatorCallback, gDefaultErrorCallback);
 
 	gPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *gFoundation, PxTolerancesScale());
@@ -62,25 +130,49 @@ void init()
 
 	sceneDesc.filterShader = PxDefaultSimulationFilterShader;
 	gScene = gPhysics->createScene(sceneDesc);
+#pragma endregion
 
-	PxBoxGeometry plane(200, 0.02, 200);
-	ground = createSActor(plane, PxVec3(-100, -1, -100));
-	sky = createSActor(plane, PxVec3(-100, 20, -100));
+#pragma region textures
+	glGenTextures(obj_amount +2 , tex);
+
+	loadTex(0, "res/tex/grass.tga");
+	loadTex(1, "res/tex/sky.tga");
+	loadTex(2, "res/tex/skull.tga");
 	
-	PxBoxGeometry box(1, 1, 1);
-	player->setBox(createDActor(box, PxVec3(0,0,0)));
+#pragma endregion
+
+#pragma region models
+	CThreeMaxLoader::Load3DS(&obj[0], "res/models/skull.3ds");
+
+	PU_Obj = glGenLists(1);
+	glNewList(PU_Obj+0,GL_COMPILE);
+	compileModel(obj[0], 2);
+	glEndList();
+#pragma endregion
+
+#pragma region init objects
+	PxBoxGeometry plane(100, 0.02, 100);
+	ground = createSActor(PxVec3(0, -1, 0),0,PxVec3(0,0,0),plane);
+	sky = createSActor(PxVec3(0, 50, 0), 0, PxVec3(0, 0, 0), plane);
+	
+	player = new Player(10.f, PU_Obj + 0);
+	PxBoxGeometry box(1, 4, 1);
+	player->setBox(createDActor(PxVec3(player->getPos().x, player->getPos().y, player->getPos().z),0,PxVec3(0,1,0),box));
+#pragma endregion
+
+	glutWarpPointer(_width / 2, _height / 2);
+	ShowCursor(false);
 }
 
-void addObj(Vec3& pos, const string& name)
+void addObj(const Vec3& pos, const string& name, const int& meshId)
 {
-	PickUp_Obj* ob = new PickUp_Obj(pos, name);
-
+	PickUp_Obj* ob = new PickUp_Obj(pos, name, meshId);
 	PxSphereGeometry sphere(1);
-	ob->setBox(createDActor(sphere, PxVec3(pos.x, pos.y, pos.z)));
+	ob->setBox(createDActor(PxVec3(pos.x, pos.y, pos.z),0, PxVec3(0, 0, 0), sphere));
 	PU_objects.push_back(ob);
 }
 
-void intro()
+void help()
 {
 	system("cls");
 	cout << "1: create PickUp Obj\n";
@@ -133,42 +225,43 @@ void renderObj()
 {
 	PxTransform pose;
 	//ground
+	glBindTexture(GL_TEXTURE_2D, tex[0]);
 	glPushMatrix();
 		pose = ground->getGlobalPose();
 		SetupGLMatrix(pose);
 
 		glColor4f(0, 1, 0, 1);
 		glBegin(GL_QUADS);
-			glVertex3f(0, 0, 0);
-			glVertex3f(0, 0, 200);
-			glVertex3f(200, 0, 200);
-			glVertex3f(200, 0, 0);
+		glTexCoord2f(0,0); glVertex3f(-100, 0, -100);
+		glTexCoord2f(0, 25); glVertex3f(-100, 0, 100);
+		glTexCoord2f(25, 25);	glVertex3f(100, 0, 100);
+		glTexCoord2f(25, 0);	glVertex3f(100, 0, -100);
 		glEnd();
 	glPopMatrix();
 	
 	//sky
+	glBindTexture(GL_TEXTURE_2D, tex[1]);
+	glColor4f(1, 1, 1,1);
 	glPushMatrix();
 		pose = sky->getGlobalPose();
 		SetupGLMatrix(pose);
-
-		glColor4f(0, 1, 1, 1);
-		glBegin(GL_QUADS);
-			glVertex3f(0, 0, 0);
-			glVertex3f(0, 0, 200);
-			glVertex3f(200, 0, 200);
-			glVertex3f(200, 0, 0);
-		glEnd();
+		glRotatef(-90, 1, 0, 0);
+		sphere1 = gluNewQuadric();
+		gluQuadricDrawStyle(sphere1, GLU_FILL);
+		gluQuadricTexture(sphere1, GL_TRUE);
+		gluQuadricNormals(sphere1, GLU_SMOOTH);    
+		gluQuadricOrientation(sphere1, GLU_INSIDE);
+		gluSphere(sphere1, 200, 40, 40);
 	glPopMatrix();
 
 //PU objects
-	for (int ii = 0; ii < PU_objects.size(); ++ii)
+	for (int ii = 0; ii < int(PU_objects.size()); ++ii)
 	{
 		glPushMatrix();
-			pose = PU_objects[PU_objects.size() - 1]->getBox()->getGlobalPose();
+			pose = PU_objects[ii]->getBox()->getGlobalPose();
 			SetupGLMatrix(pose);
-
-			glColor4f(1, 0, 0, 1);
-				glutSolidSphere(1, 32, 32);			//mesh
+			glColor4f(1, 0, 1, 1);
+			glCallList(PU_objects[ii]->getModel());			//mesh
 		glPopMatrix();
 	}
 
@@ -178,9 +271,9 @@ void renderObj()
 		glPushMatrix();
 			pose = player->getBox()->getGlobalPose();
 			SetupGLMatrix(pose);
-
-			glColor4f(0, 0, 1, player->getAlpha());
-			glutSolidTeapot(1);					//mesh
+			glTranslatef(0, player->idleY, 0);
+			glColor4f(0.8, 0.4, 0, player->getAlpha());
+			glCallList(player->getModel());					//mesh
 		glPopMatrix();
 	}
 }
@@ -194,10 +287,22 @@ void render()
 
 	gScene->simulate(SIM_TIME);
 	gScene->fetchResults(true);
+	
+	player->update();
 
-	gluLookAt(-player->cam.getPos().x, -player->cam.getPos().y, -player->cam.getPos().z,
-		-player->getPos().x, -player->getPos().y, -player->getPos().z,
+	gluLookAt(player->cam.getPos().x, player->cam.getPos().y, player->cam.getPos().z,
+		player->getPos().x, player->getPos().y, player->getPos().z,
 		0, 1, 0);
+
+#pragma region Light
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lightAmb);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor0);
+	glLightfv(GL_LIGHT0, GL_POSITION, l_pos1);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmb);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, lightSpec);
+	glMateriali(GL_FRONT, GL_SHININESS, 10);
+	
+#pragma endregion
 
 	renderObj();
 	glutSwapBuffers();
@@ -208,7 +313,7 @@ void reshape(int w, int h)
 	glViewport(0, 0, w, h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(60.0f, float(w / h), 0.1f, 100.0f);
+	gluPerspective(60.0f, (float)w / h, 0.1f, 340);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	_width = w;
@@ -217,6 +322,8 @@ void reshape(int w, int h)
 
 void keyboard(unsigned char key, int x, int y)
 {
+	PX_UNUSED(x);
+	PX_UNUSED(y);
 	int state = glutGetModifiers();
 	switch (state)
 	{
@@ -235,7 +342,7 @@ void keyboard(unsigned char key, int x, int y)
 	{
 	case '1':
 		system("cls");
-		//addObj(player->getforward()*= 10, "skrzynka");
+		addObj(player->getforward() , "czaszka", PU_Obj + 0);
 		cout << "dodano: "<<PU_objects[PU_objects.size()-1]->getName();
 		break;
 
@@ -271,13 +378,17 @@ void keyboard(unsigned char key, int x, int y)
 		player->zoom('-');
 		break;
 	default:
-		intro();
+		help();
 		break;
 	}
 }
 
+#pragma region mouse funcs
+//tracking mouse buttons
 void mouse(int but, int state, int x, int y)
 {
+	PX_UNUSED(x);
+	PX_UNUSED(y);
 	if (but == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
 		down = true;
 
@@ -289,19 +400,18 @@ void mouse(int but, int state, int x, int y)
 	if (but == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 		cout << "interact" << endl;
 }
-
 //look around
 void mouseMove(int x, int y)
 {
 	if (down)
 		player->mouse(x - width / 2, y - height / 2);
 }
-
 //move in that direction
 void passiveMouseMove(int x, int y)
 {
 	player->look(x - width / 2, y - height / 2);
 }
+#pragma endregion
 
 void timer(int val)
 {
@@ -309,6 +419,7 @@ void timer(int val)
 	glutTimerFunc(val, timer, 0);
 }
 
+// atexit func
 void ex()
 {
 	delete player;
@@ -323,7 +434,7 @@ void ex()
 
 int main(int argc, char *argv[])
 {
-	intro();
+	help();
 	
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
@@ -338,12 +449,6 @@ int main(int argc, char *argv[])
 	glutMouseFunc(mouse);
 	glutMotionFunc(mouseMove);
 	glutPassiveMotionFunc(passiveMouseMove);
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	glutWarpPointer(_width / 2, _height / 2);
-	glutSetCursor(GLUT_CURSOR_NONE);
 
 	glutTimerFunc(1000 / FPS, timer, 0);
 

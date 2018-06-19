@@ -1,4 +1,5 @@
 #pragma once
+
 class Vec3
 {
 public:
@@ -7,7 +8,7 @@ public:
 	float z;
 
 	Vec3();
-	Vec3(float, float, float);
+	Vec3(const float&, const float&, const float&);
 	Vec3(const Vec3&);
 	~Vec3();
 

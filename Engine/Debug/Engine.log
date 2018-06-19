@@ -1,15 +1,4 @@
-﻿  Engine.cpp
-d:\c++\engine\engine\engine.cpp(67): warning C4239: użyto niestandardowego rozszerzenia: „argument”: konwersja z „physx::PxVec3” do „physx::PxVec3 &”
-  d:\c++\engine\engine\engine.cpp(67): note: Odwołanie niestałe może zostać powiązane tylko z wartościowaniem lewostronnym
-d:\c++\engine\engine\engine.cpp(68): warning C4239: użyto niestandardowego rozszerzenia: „argument”: konwersja z „physx::PxVec3” do „physx::PxVec3 &”
-  d:\c++\engine\engine\engine.cpp(68): note: Odwołanie niestałe może zostać powiązane tylko z wartościowaniem lewostronnym
-d:\c++\engine\engine\engine.cpp(71): warning C4239: użyto niestandardowego rozszerzenia: „argument”: konwersja z „physx::PxVec3” do „physx::PxVec3 &”
-  d:\c++\engine\engine\engine.cpp(71): note: Odwołanie niestałe może zostać powiązane tylko z wartościowaniem lewostronnym
-d:\c++\engine\engine\engine.cpp(79): warning C4239: użyto niestandardowego rozszerzenia: „argument”: konwersja z „physx::PxVec3” do „physx::PxVec3 &”
-  d:\c++\engine\engine\engine.cpp(79): note: Odwołanie niestałe może zostać powiązane tylko z wartościowaniem lewostronnym
-d:\c++\engine\engine\engine.cpp(164): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
-d:\c++\engine\engine\engine.cpp(218): warning C4100: "y": parametr formalny, do którego nie istnieje odwołanie
-d:\c++\engine\engine\engine.cpp(218): warning C4100: "x": parametr formalny, do którego nie istnieje odwołanie
-d:\c++\engine\engine\engine.cpp(279): warning C4100: "y": parametr formalny, do którego nie istnieje odwołanie
-d:\c++\engine\engine\engine.cpp(279): warning C4100: "x": parametr formalny, do którego nie istnieje odwołanie
+﻿  Player.cpp
+d:\c++\engine\engine\player\player.cpp(214): warning C4458: deklaracja „state” powoduje ukrycie składowej klasy
+  d:\c++\engine\engine\player\player.h(46): note: zobacz deklarację „Player::state”
   Engine.vcxproj -> D:\C++\Engine\Debug\Engine.exe
