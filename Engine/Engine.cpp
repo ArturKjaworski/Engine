@@ -266,7 +266,7 @@ void renderObj()
 	}
 
 	//character
-	if (player->cam.camType == Camera::TPP)
+	if (player->cam->camType == Camera::TPP)
 	{
 		glPushMatrix();
 			pose = player->getBox()->getGlobalPose();
@@ -289,10 +289,15 @@ void render()
 	gScene->fetchResults(true);
 	
 	player->update();
+	if (player->cam->camType == Camera::TPP)
+		gluLookAt(player->cam->getPos().x, player->cam->getPos().y, player->cam->getPos().z,
+			player->getPos().x, player->getPos().y, player->getPos().z,
+			0, 1, 0);
+	else
+		gluLookAt(player->cam->getPos().x, player->cam->getPos().y+player->idleY, player->cam->getPos().z,
+			player->getPos().x, player->getPos().y + player->idleY, player->getPos().z,
+			0, 1, 0);
 
-	gluLookAt(player->cam.getPos().x, player->cam.getPos().y, player->cam.getPos().z,
-		player->getPos().x, player->getPos().y, player->getPos().z,
-		0, 1, 0);
 
 #pragma region Light
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lightAmb);

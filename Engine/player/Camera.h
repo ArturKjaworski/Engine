@@ -29,7 +29,7 @@ private:
 	Vec3 camRot;
 	float camDist;
 	bool mMove;
-	bool nStep;		//bool for camera movement when moving
+
 
 	float zoom(const int&);
 	void look(const float&, const float&, const Vec3&);

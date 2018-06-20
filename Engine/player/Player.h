@@ -13,19 +13,16 @@ public:
 	int mana;
 	int speed;
 
-	Camera cam;
+	Camera* cam;
 
 float idleY = 0;
 private:
-	Vec3 pos;
+	//Vec3 pos;
 	Vec3 rot;
 	Vec3 forward;
 	float alpha;
 
-	
-
-
-	PxRigidBody* box;
+	PxRigidBody* box = nullptr;
 	int model;
 
 public:
