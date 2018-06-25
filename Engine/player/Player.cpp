@@ -64,7 +64,7 @@ void Player::move(Dir dir)
 	{
 		newPos += Pv;
 		cam->camPos += v;
-		v.x*v.z<0 ? cam->camMovement(xpow2, speed) : cam->camMovement(-xpow2, speed);
+	//	v.x*v.z<0 ? cam->camMovement(xpow2, speed) : cam->camMovement(-xpow2, speed);
 		break;
 	}
 
@@ -72,7 +72,7 @@ void Player::move(Dir dir)
 	{
 		newPos -= Pv;
 		cam->camPos -= v;
-		v.x*v.z<0 ? cam->camMovement(xpow2, speed) : cam->camMovement(-xpow2, speed);
+	//	v.x*v.z<0 ? cam->camMovement(xpow2, speed) : cam->camMovement(-xpow2, speed);
 		break;
 	}
 
@@ -211,7 +211,6 @@ void Player::zoom(const char& val)
 		break;
 	}
 	cam->look(Vec3(box->getGlobalPose().p.x, box->getGlobalPose().p.y, box->getGlobalPose().p.z));
-	cout << cam->camDist<<endl;
 }
 
 void Player::setState(stat state)
@@ -247,7 +246,7 @@ void Player::setState(stat state)
 	}
 }
 
-void Player::setBox(PxRigidDynamic* actor)
+void Player::setBox(PxRigidBody* actor)
 {
 	box = actor;
 }
@@ -289,12 +288,12 @@ float Player::moveTimer()
 //CHECK for death AND sync player pos (Vec3) with PhysX pos (PxVec3) (Should be on PxVec3 instead)
 void Player::update()
 {
-
+	box->setLinearVelocity(PxVec3(0, 0, 0));
+	box->setAngularVelocity(PxVec3(0, 0, 0));
 	PxTransform pose = box->getGlobalPose();
 	//pos.x = pose.p.x;
 	//pos.y = pose.p.y;
 	//pos.z = pose.p.z;
-
 	idleY += moveTimer();
 
 	if (pose.p.y < -4 || hp <= 0)

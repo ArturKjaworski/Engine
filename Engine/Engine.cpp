@@ -3,6 +3,7 @@
 #include "PickUp_Obj.h"
 #include "graphics classes/Targa.hpp"
 #include "graphics classes/ThreeMaxLoader.h"
+#include "labirynth gen/LabGen.h"
 
 int _width(920);
 int _height(640);
@@ -18,10 +19,16 @@ GLint PU_Obj;
 #pragma endregion
 
 #pragma region global vars for world & player
-GLUquadricObj *sphere1;
-Player* player;
-vector<PickUp_Obj*> PU_objects;
+int labSizeX = 5;
+int labSizeZ = 5;
+
 PxRigidStatic* ground, *sky;
+GLUquadricObj *sphere1;
+LabGen maze;
+//
+Player* player;
+//
+vector<PickUp_Obj*> PU_objects;
 #pragma endregion
 
 #pragma region light vars
@@ -44,7 +51,7 @@ PxPhysics*				gPhysics = NULL;
 PxDefaultCpuDispatcher*	gDispatcher = NULL;
 PxScene*				gScene = NULL;
 
-PxRigidDynamic* createDActor(PxVec3& pos, const float& angle,const PxVec3& axis, const PxGeometry& geometry)
+PxRigidBody* createDActor(const PxVec3& pos, const float& angle,const PxVec3& axis, const PxGeometry& geometry)
 {
 	PxQuat kwat(angle*PI/180, axis);
 	PxTransform t(pos, kwat);
@@ -52,17 +59,18 @@ PxRigidDynamic* createDActor(PxVec3& pos, const float& angle,const PxVec3& axis,
 	PxMaterial* m = gPhysics->createMaterial(0.5,0.5,0.5);
 	PxRigidDynamic* actor = PxCreateDynamic(*gPhysics, t, geometry, *m, 10.0f);
 	gScene->addActor(*actor);
+
 	return actor;
 }
 
-PxRigidStatic* createSActor(PxVec3& pos, const float& angle, const PxVec3& axis, const PxGeometry& geometry)
+PxRigidStatic* createSActor(const PxVec3& pos, const float& angle, const PxVec3& axis, const PxGeometry& geometry)
 {
 	PxQuat kwat(angle*PI / 180, axis);
 	PxTransform t(pos, kwat);
 
 	PxMaterial* m = gPhysics->createMaterial(.5f, .5f, .5f);
 	PxRigidStatic* actor = PxCreateStatic(*gPhysics, t, geometry, *m);
-
+	
 	gScene->addActor(*actor);
 	return actor;
 }
@@ -151,13 +159,26 @@ void init()
 #pragma endregion
 
 #pragma region init objects
+	//labirynth
+	maze = LabGen(labSizeX, labSizeZ);
+	maze.SetWalls(&createSActor);
+
+	//sky, ground
 	PxBoxGeometry plane(100, 0.02, 100);
-	ground = createSActor(PxVec3(0, -1, 0),0,PxVec3(0,0,0),plane);
+	ground = createSActor(PxVec3(0, 0, 0),0,PxVec3(0,0,0),plane);
 	sky = createSActor(PxVec3(0, 50, 0), 0, PxVec3(0, 0, 0), plane);
+
+
 	
+#pragma region player
+
 	player = new Player(10.f, PU_Obj + 0);
 	PxBoxGeometry box(1, 4, 1);
 	player->setBox(createDActor(PxVec3(player->getPos().x, player->getPos().y, player->getPos().z),0,PxVec3(0,1,0),box));
+
+#pragma endregion
+
+
 #pragma endregion
 
 	glutWarpPointer(_width / 2, _height / 2);
@@ -232,10 +253,10 @@ void renderObj()
 
 		glColor4f(0, 1, 0, 1);
 		glBegin(GL_QUADS);
-		glTexCoord2f(0,0); glVertex3f(-100, 0, -100);
-		glTexCoord2f(0, 25); glVertex3f(-100, 0, 100);
-		glTexCoord2f(25, 25);	glVertex3f(100, 0, 100);
-		glTexCoord2f(25, 0);	glVertex3f(100, 0, -100);
+		glTexCoord2f(0,0); glVertex3f(0-LabField::size / 2, 0, 0 - LabField::size / 2);
+		glTexCoord2f(0, 25); glVertex3f(0 - LabField::size / 2, 0, labSizeZ*LabField::size);
+		glTexCoord2f(25, 25);	glVertex3f(labSizeX*LabField::size, 0, labSizeZ*LabField::size);
+		glTexCoord2f(25, 0);	glVertex3f(labSizeX*LabField::size, 0, 0 - LabField::size/2);
 		glEnd();
 	glPopMatrix();
 	
@@ -244,6 +265,7 @@ void renderObj()
 	glColor4f(1, 1, 1,1);
 	glPushMatrix();
 		pose = sky->getGlobalPose();
+		pose.p = player->getBox()->getGlobalPose().p;
 		SetupGLMatrix(pose);
 		glRotatef(-90, 1, 0, 0);
 		sphere1 = gluNewQuadric();
@@ -251,8 +273,10 @@ void renderObj()
 		gluQuadricTexture(sphere1, GL_TRUE);
 		gluQuadricNormals(sphere1, GLU_SMOOTH);    
 		gluQuadricOrientation(sphere1, GLU_INSIDE);
-		gluSphere(sphere1, 200, 40, 40);
+		gluSphere(sphere1, 500, 40, 40);
 	glPopMatrix();
+
+	maze.render();
 
 //PU objects
 	for (int ii = 0; ii < int(PU_objects.size()); ++ii)
@@ -318,12 +342,13 @@ void reshape(int w, int h)
 	glViewport(0, 0, w, h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(60.0f, (float)w / h, 0.1f, 340);
+	gluPerspective(60.0f, (float)w / h, 0.1f, 1000);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	_width = w;
 	_height = h;
 }
+
 
 void keyboard(unsigned char key, int x, int y)
 {
@@ -371,22 +396,26 @@ void keyboard(unsigned char key, int x, int y)
 		//jump
 		break;
 
-	case 'Q':
-	case 'q':
-	case 27:
-		exit(0);
-
 	case 'x':
 		player->zoom('+');
 		break;
 	case 'z':
 		player->zoom('-');
 		break;
+
+	case 'Q':
+	case 'q':
+	case 27:
+		exit(0);
+		//break;
+
 	default:
 		help();
 		break;
 	}
 }
+// atexit func
+
 
 #pragma region mouse funcs
 //tracking mouse buttons
@@ -424,12 +453,11 @@ void timer(int val)
 	glutTimerFunc(val, timer, 0);
 }
 
-// atexit func
 void ex()
 {
 	delete player;
 	PU_objects.clear();
-	
+
 	//physx
 	gScene->release();
 	gDispatcher->release();

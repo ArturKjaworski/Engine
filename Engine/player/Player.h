@@ -55,7 +55,7 @@ public:
 
 	void setForward();
 	void setState(stat);
-	void setBox(PxRigidDynamic* actor);
+	void setBox(PxRigidBody* actor);
 
 
 	void update();

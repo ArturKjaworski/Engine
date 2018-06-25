@@ -148,7 +148,8 @@
   <ItemGroup>
     <ClInclude Include="graphics classes\Targa.hpp" />
     <ClInclude Include="Interactable_Obj.h" />
-    <ClInclude Include="LabGen.h" />
+    <ClInclude Include="labirynth gen\LabField.h" />
+    <ClInclude Include="labirynth gen\LabGen.h" />
     <ClInclude Include="PickUp_Obj.h" />
     <ClInclude Include="player\Camera.h" />
     <ClInclude Include="player\Player.h" />
@@ -162,7 +163,8 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="Interactable_Obj.cpp" />
-    <ClCompile Include="LabGen.cpp">
+    <ClCompile Include="labirynth gen\LabField.cpp" />
+    <ClCompile Include="labirynth gen\LabGen.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="PickUp_Obj.cpp" />

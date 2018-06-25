@@ -29,6 +29,7 @@ Camera::~Camera()
 //on key for now.  return alpha channel
 float Camera::zoom(const int& val)
 {
+	
 	camDist+=val;
 	if (camDist <= 0)
 	{
@@ -53,6 +54,14 @@ float Camera::zoom(const int& val)
 		return 1;
 	}
 }
+void Camera::look(const Vec3& pos)
+{
+	camPos.x = camDist * sin(camRot.x*PI / 180) + pos.x;
+	camPos.z = camDist * -cos(camRot.x*PI / 180) + pos.z;
+	camPos.y = camDist * cos(camRot.y*PI / 180) + pos.y;
+
+	glutWarpPointer(width / 2, height / 2);
+}
 
 void Camera::look(const float& rotx, const float& roty,const Vec3& pos)
 {
@@ -67,73 +76,17 @@ void Camera::look(const float& rotx, const float& roty,const Vec3& pos)
 	if (camRot.y < 0)
 		camRot.y = 0;
 
-		camPos.x = camDist * sin(camRot.x*PI / 180) + pos.x;
-		camPos.z = camDist * -cos(camRot.x*PI / 180) + pos.z;
-		camPos.y = camDist * cos(camRot.y*PI / 180) + pos.y;
+	look(pos);
 
 	if (camPos.y <= 0)
 	{
 		camPos.y = 0;
-		//	--camDist;
 	}
-		
-
-	glutWarpPointer(width / 2, height / 2);
 	mMove = true;
 	}
 	else
 		mMove = false;
 }
-
-void Camera::look(const Vec3& pos)
-{
-		camPos.x = camDist * sin(camRot.x*PI / 180) + pos.x;
-		camPos.z = camDist * -cos(camRot.x*PI / 180) + pos.z;
-		camPos.y = camDist * cos(camRot.y*PI / 180) + pos.y;
-
-	if (camPos.y >= 1)
-		camPos.y = 1;
-
-	glutWarpPointer(width / 2, height / 2);
-}
-
-void Camera::camMovement(const float& val, const float& spd)
-{
-//	//camera movement while moving		//right foot first
-	/*if (val > 0)
-	{
-		if (nStep)
-		{
-			camPos.x += sqrt(1 - val)*0.00001*spd;
-			camPos.z -= sqrt(val)*0.00001*spd;
-		}
-		else
-		{
-			camPos.x -= sqrt(1 - val)*0.00001*spd;
-			camPos.z += sqrt(val)*0.00001*spd;
-		}
-	}else
-		if (nStep)
-		{
-			camPos.x += sqrt(1 + val)*0.00001*spd;
-			camPos.z += sqrt(-val)*0.00001*spd;
-		}
-		else
-		{
-			camPos.x -= sqrt(1 + val)*0.00001*spd;
-			camPos.z -= sqrt(-val)*0.00001*spd;
-		}
-	moveTimer();*/
-}
-
-//void Camera::moveTimer()
-//{
-//	if (float (clock() - t_start) / CLOCKS_PER_SEC >= 0.2)
-//	{
-//		t_start = clock();
-//		nStep = !nStep;
-//	}
-//}
 
 Vec3 Camera::getRot()
 {

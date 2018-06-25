@@ -1,15 +1,4 @@
-﻿  Engine.cpp
-d:\c++\engine\engine\graphics classes\threemaxloader.h(59): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.17134.0\ucrt\stdio.h(208): note: zobacz deklarację „fopen”
-d:\c++\engine\engine\graphics classes\threemaxloader.h(61): warning C4996: 'filelength': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _filelength. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.17134.0\ucrt\corecrt_io.h(486): note: zobacz deklarację „filelength”
-d:\c++\engine\engine\engine.cpp(29): warning C4838: konwersja z „double” do „GLfloat” wymaga konwersji zawężającej
-d:\c++\engine\engine\engine.cpp(155): warning C4239: użyto niestandardowego rozszerzenia: „argument”: konwersja z „physx::PxVec3” do „physx::PxVec3 &”
-  d:\c++\engine\engine\engine.cpp(155): note: Odwołanie niestałe może zostać powiązane tylko z wartościowaniem lewostronnym
-d:\c++\engine\engine\engine.cpp(156): warning C4239: użyto niestandardowego rozszerzenia: „argument”: konwersja z „physx::PxVec3” do „physx::PxVec3 &”
-  d:\c++\engine\engine\engine.cpp(156): note: Odwołanie niestałe może zostać powiązane tylko z wartościowaniem lewostronnym
-d:\c++\engine\engine\engine.cpp(160): warning C4239: użyto niestandardowego rozszerzenia: „argument”: konwersja z „physx::PxVec3” do „physx::PxVec3 &”
-  d:\c++\engine\engine\engine.cpp(160): note: Odwołanie niestałe może zostać powiązane tylko z wartościowaniem lewostronnym
-d:\c++\engine\engine\engine.cpp(171): warning C4239: użyto niestandardowego rozszerzenia: „argument”: konwersja z „physx::PxVec3” do „physx::PxVec3 &”
-  d:\c++\engine\engine\engine.cpp(171): note: Odwołanie niestałe może zostać powiązane tylko z wartościowaniem lewostronnym
+﻿  LabGen.cpp
+d:\c++\engine\engine\labirynth gen\labgen.cpp(50): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
+d:\c++\engine\engine\labirynth gen\labgen.cpp(195): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
   Engine.vcxproj -> D:\C++\Engine\Debug\Engine.exe

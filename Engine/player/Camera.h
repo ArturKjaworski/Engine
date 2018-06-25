@@ -20,7 +20,6 @@ public:
 	}; 
 	camType camType;
 
-
 	Vec3 getRot();
 	Vec3 getPos();
 
@@ -34,9 +33,5 @@ private:
 	float zoom(const int&);
 	void look(const float&, const float&, const Vec3&);
 	void look(const Vec3&);
-	void camMovement(const float&, const float&);
-
-	void moveTimer();
-
 };
 
