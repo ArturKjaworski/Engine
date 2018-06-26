@@ -12,15 +12,15 @@ int _height(640);
 
 #pragma region tex & models
 
-GLuint tex[obj_amount+2];
+GLuint tex[obj_amount+3];
 obj_type obj[obj_amount];
 
 GLint PU_Obj;
 #pragma endregion
 
 #pragma region global vars for world & player
-int labSizeX = 5;
-int labSizeZ = 5;
+int labSizeX = 25;
+int labSizeZ = 25;
 
 PxRigidStatic* ground, *sky;
 GLUquadricObj *sphere1;
@@ -141,11 +141,12 @@ void init()
 #pragma endregion
 
 #pragma region textures
-	glGenTextures(obj_amount +2 , tex);
+	glGenTextures(obj_amount +3 , tex);
 
 	loadTex(0, "res/tex/grass.tga");
 	loadTex(1, "res/tex/sky.tga");
-	loadTex(2, "res/tex/skull.tga");
+	loadTex(2, "res/tex/wall.tga");
+	loadTex(3, "res/tex/skull.tga");
 	
 #pragma endregion
 
@@ -154,7 +155,7 @@ void init()
 
 	PU_Obj = glGenLists(1);
 	glNewList(PU_Obj+0,GL_COMPILE);
-	compileModel(obj[0], 2);
+	compileModel(obj[0], 3);
 	glEndList();
 #pragma endregion
 
@@ -167,8 +168,6 @@ void init()
 	PxBoxGeometry plane(100, 0.02, 100);
 	ground = createSActor(PxVec3(0, 0, 0),0,PxVec3(0,0,0),plane);
 	sky = createSActor(PxVec3(0, 50, 0), 0, PxVec3(0, 0, 0), plane);
-
-
 	
 #pragma region player
 
@@ -177,7 +176,6 @@ void init()
 	player->setBox(createDActor(PxVec3(player->getPos().x, player->getPos().y, player->getPos().z),0,PxVec3(0,1,0),box));
 
 #pragma endregion
-
 
 #pragma endregion
 
@@ -253,8 +251,8 @@ void renderObj()
 
 		glColor4f(0, 1, 0, 1);
 		glBegin(GL_QUADS);
-		glTexCoord2f(0,0); glVertex3f(0-LabField::size / 2, 0, 0 - LabField::size / 2);
-		glTexCoord2f(0, 25); glVertex3f(0 - LabField::size / 2, 0, labSizeZ*LabField::size);
+		glTexCoord2f(0,0);		glVertex3f(0-LabField::size / 2, 0, 0 - LabField::size / 2);
+		glTexCoord2f(0, 25);	glVertex3f(0 - LabField::size / 2, 0, labSizeZ*LabField::size);
 		glTexCoord2f(25, 25);	glVertex3f(labSizeX*LabField::size, 0, labSizeZ*LabField::size);
 		glTexCoord2f(25, 0);	glVertex3f(labSizeX*LabField::size, 0, 0 - LabField::size/2);
 		glEnd();
@@ -276,6 +274,7 @@ void renderObj()
 		gluSphere(sphere1, 500, 40, 40);
 	glPopMatrix();
 
+	glBindTexture(GL_TEXTURE_2D,tex[2]);
 	maze.render();
 
 //PU objects
@@ -414,8 +413,6 @@ void keyboard(unsigned char key, int x, int y)
 		break;
 	}
 }
-// atexit func
-
 
 #pragma region mouse funcs
 //tracking mouse buttons
@@ -453,6 +450,7 @@ void timer(int val)
 	glutTimerFunc(val, timer, 0);
 }
 
+// atexit func
 void ex()
 {
 	delete player;
@@ -467,13 +465,14 @@ void ex()
 
 int main(int argc, char *argv[])
 {
+	srand(time(NULL));
 	help();
-	
+
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowSize(_width, _height);
 	glutInitWindowPosition(1920 - _width, 1080 - _height);
-	glutCreateWindow("FPP");
+	glutCreateWindow("Another PacMan?");
 
 	glutDisplayFunc(render);
 	glutReshapeFunc(reshape);

@@ -78,10 +78,10 @@ void Camera::look(const float& rotx, const float& roty,const Vec3& pos)
 
 	look(pos);
 
-	if (camPos.y <= 0)
-	{
-		camPos.y = 0;
-	}
+	//if (camPos.y <= 0)
+	//{
+	//	camPos.y = 0;
+	//}
 	mMove = true;
 	}
 	else

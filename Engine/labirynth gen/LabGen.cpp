@@ -1,6 +1,5 @@
 #include "../stdafx.h"
 #include "LabGen.h"
-
 LabGen::LabGen()
 {
 }
@@ -71,40 +70,68 @@ void LabGen::render()
 		glColor3f(0.5, 0.5, 0.5);
 		if (field[i].n == true) {
 			glBegin(GL_QUADS);
-			glVertex3f(field[i].pos.x - field[i].LabField::size / 2, 0, field[i].pos.z - field[i].LabField::size / 2);
-			glVertex3f(field[i].pos.x + field[i].LabField::size / 2, 0, field[i].pos.z - field[i].LabField::size / 2);
-			glVertex3f(field[i].pos.x + field[i].LabField::size / 2, LabField::size, field[i].pos.z - field[i].LabField::size / 2);
-			glVertex3f(field[i].pos.x - field[i].LabField::size / 2, LabField::size, field[i].pos.z - field[i].LabField::size / 2);
+				glTexCoord2f(0, 0);
+				glVertex3f(field[i].pos.x - field[i].LabField::size / 2, 0, field[i].pos.z - field[i].LabField::size / 2);
+			
+				glTexCoord2f(0, 1);
+				glVertex3f(field[i].pos.x - field[i].LabField::size / 2, LabField::size, field[i].pos.z - field[i].LabField::size / 2);
+			
+				glTexCoord2f(1, 1);
+				glVertex3f(field[i].pos.x + field[i].LabField::size / 2, LabField::size, field[i].pos.z - field[i].LabField::size / 2);
+
+				glTexCoord2f(1, 0);
+				glVertex3f(field[i].pos.x + field[i].LabField::size / 2, 0, field[i].pos.z - field[i].LabField::size / 2);
 			glEnd();
 		}
 		//s sciana
 		//
 		if (field[i].s == true) {
 			glBegin(GL_QUADS);
-			glVertex3f(field[i].pos.x - field[i].LabField::size / 2, 0, field[i].pos.z + field[i].LabField::size / 2);
-			glVertex3f(field[i].pos.x + field[i].LabField::size / 2, 0, field[i].pos.z + field[i].LabField::size / 2);
-			glVertex3f(field[i].pos.x + field[i].LabField::size / 2, LabField::size, field[i].pos.z + field[i].LabField::size / 2);
-			glVertex3f(field[i].pos.x - field[i].LabField::size / 2, LabField::size, field[i].pos.z + field[i].LabField::size / 2);
+				glTexCoord2f(0, 0);
+				glVertex3f(field[i].pos.x - field[i].LabField::size / 2, 0, field[i].pos.z + field[i].LabField::size / 2);
+			
+				glTexCoord2f(1, 0);
+				glVertex3f(field[i].pos.x - field[i].LabField::size / 2, LabField::size, field[i].pos.z + field[i].LabField::size / 2);
+			
+				glTexCoord2f(1, 1);
+				glVertex3f(field[i].pos.x + field[i].LabField::size / 2, LabField::size, field[i].pos.z + field[i].LabField::size / 2);
+
+				glTexCoord2f(0, 1);
+				glVertex3f(field[i].pos.x + field[i].LabField::size / 2, 0, field[i].pos.z + field[i].LabField::size / 2);
 			glEnd();
 		}
 		//e sciana
 
 		if (field[i].e == true) {
 			glBegin(GL_QUADS);
-			glVertex3f(field[i].pos.x - field[i].LabField::size / 2, 0, field[i].pos.z - field[i].LabField::size / 2);
-			glVertex3f(field[i].pos.x - field[i].LabField::size / 2, 0, field[i].pos.z + field[i].LabField::size / 2);
-			glVertex3f(field[i].pos.x - field[i].LabField::size / 2, LabField::size, field[i].pos.z + field[i].LabField::size / 2);
-			glVertex3f(field[i].pos.x - field[i].LabField::size / 2, LabField::size, field[i].pos.z - field[i].LabField::size / 2);
+				glTexCoord2f(0, 0);
+				glVertex3f(field[i].pos.x - field[i].LabField::size / 2, 0, field[i].pos.z - field[i].LabField::size / 2);
+
+				glTexCoord2f(0, 1); 
+				glVertex3f(field[i].pos.x - field[i].LabField::size / 2, LabField::size, field[i].pos.z - field[i].LabField::size / 2);
+
+				glTexCoord2f(1, 1);
+				glVertex3f(field[i].pos.x - field[i].LabField::size / 2, LabField::size, field[i].pos.z + field[i].LabField::size / 2); 
+			
+				glTexCoord2f(1, 0);
+				glVertex3f(field[i].pos.x - field[i].LabField::size / 2, 0, field[i].pos.z + field[i].LabField::size / 2);
 			glEnd();
 		}
 		//w sciana
 
 		if (field[i].w == true) {
 			glBegin(GL_QUADS);
-			glVertex3f(field[i].pos.x + field[i].LabField::size / 2, 0, field[i].pos.z - field[i].LabField::size / 2);
-			glVertex3f(field[i].pos.x + field[i].LabField::size / 2, 0, field[i].pos.z + field[i].LabField::size / 2);
-			glVertex3f(field[i].pos.x + field[i].LabField::size / 2, LabField::size, field[i].pos.z + field[i].LabField::size / 2);
-			glVertex3f(field[i].pos.x + field[i].LabField::size / 2, LabField::size, field[i].pos.z - field[i].LabField::size / 2);
+				glTexCoord2f(0, 0);
+				glVertex3f(field[i].pos.x + field[i].LabField::size / 2, 0, field[i].pos.z - field[i].LabField::size / 2);
+		
+				glTexCoord2f(1, 0);
+				glVertex3f(field[i].pos.x + field[i].LabField::size / 2, LabField::size, field[i].pos.z - field[i].LabField::size / 2);
+
+				glTexCoord2f(1, 1);
+				glVertex3f(field[i].pos.x + field[i].LabField::size / 2, LabField::size, field[i].pos.z + field[i].LabField::size / 2);
+
+				glTexCoord2f(0, 1);
+				glVertex3f(field[i].pos.x + field[i].LabField::size / 2, 0, field[i].pos.z + field[i].LabField::size / 2); 
 			glEnd();
 		}
 	}
@@ -112,12 +139,11 @@ void LabGen::render()
 
 //WEST AND EAST ARE SWAPPED!! (Mistakes were made...) 
 //It sets "virtual" walls
-void LabGen::setWalls(const int& i=0)
+void LabGen::setWalls(const int& i)
 {
 	while (true)
 	{
 		int tmp = rand() % 4;
-
 		//WEST
 		if (tmp == 0)
 		{

@@ -1,4 +1,4 @@
 ﻿  LabGen.cpp
-d:\c++\engine\engine\labirynth gen\labgen.cpp(50): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
-d:\c++\engine\engine\labirynth gen\labgen.cpp(195): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
+d:\c++\engine\engine\labirynth gen\labgen.cpp(48): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
+d:\c++\engine\engine\labirynth gen\labgen.cpp(220): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
   Engine.vcxproj -> D:\C++\Engine\Debug\Engine.exe
