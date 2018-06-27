@@ -9,13 +9,13 @@ Player::Player(const int& mesh)
 	hp = 100;
 	stamina = 100;
 	mana = 100;
+	ammo = 10;
 	speed = 1;
 	state = idle;
 
 	cam = new Camera(10);
 	model = mesh;
 
-	//pos = Vec3();
 	rot = Vec3();
 	forward = Vec3();
 	alpha = cam->camDist > 4 ? 1 : 0.5;
@@ -31,8 +31,6 @@ Player::Player(const float& camDist, const int& mesh)
 
 	cam = new Camera(camDist);
 	model = mesh;
-
-	//pos = Vec3(0, 3, 0);
 	rot = Vec3();
 	forward = Vec3();
 	alpha = cam->camDist > 4 ? 1 : 0.5;
@@ -40,75 +38,63 @@ Player::Player(const float& camDist, const int& mesh)
 
 Player::~Player()
 {
-	delete cam;
-
+	if (cam != nullptr)
+	{
+		delete cam;
+		cam = nullptr;
+	}
 }
 
 void Player::move(Dir dir)
 {
-	Vec3 v(forward.x, 0, forward.z);		//delete later
-	v.normalize();
-	/////////////////////////////
-	PxVec3 Pv = PxVec3(v.x, 0, v.z);
+	PxVec3 Pv = PxVec3(forward.x, 0, forward.z);
+	Pv.normalize();
 
-
-	//x^2 + z^2 = 1		 \   (x and z normalized)
-	//					  |
-	//v.x*x + v.z*z = 0  / 
+	//x^2 + z^2 = 1		 }   (x and z normalized)
+	//					  }
+	//v.x*x + v.z*z = 0  } 
 	PxVec3 newPos = box->getGlobalPose().p;
-	float xpow2 = pow(v.z, 2) / (pow(v.z, 2) + pow(v.x, 2));
+	float xpow2 = pow(Pv.z, 2) / (pow(Pv.z, 2) + pow(Pv.x, 2));
 
 	switch (dir)
 	{
 	case front:
 	{
 		newPos += Pv;
-		cam->camPos += v;
-	//	v.x*v.z<0 ? cam->camMovement(xpow2, speed) : cam->camMovement(-xpow2, speed);
 		break;
 	}
 
 	case back:
 	{
 		newPos -= Pv;
-		cam->camPos -= v;
-	//	v.x*v.z<0 ? cam->camMovement(xpow2, speed) : cam->camMovement(-xpow2, speed);
 		break;
 	}
 
 	case left:
 	{
 		//I			
-		if (v.z >= 0 && v.x >= 0)
+		if (Pv.z >= 0 && Pv.x >= 0)
 		{
 			newPos.x += sqrt(xpow2)*speed;
 			newPos.z -= sqrt(1 - xpow2)*speed;
-			cam->camPos.x += sqrt(xpow2)*speed;
-			cam->camPos.z -= sqrt(1 - xpow2)*speed;
 		}
 		//II
-		if (v.z >= 0 && v.x < 0)
+		if (Pv.z >= 0 && Pv.x < 0)
 		{
 			newPos.x += sqrt(xpow2)*speed;
 			newPos.z += sqrt(1 - xpow2)*speed;
-			cam->camPos.x += sqrt(xpow2)*speed;
-			cam->camPos.z += sqrt(1 - xpow2)*speed;
 		}
 		//III
-		if (v.z < 0 && v.x < 0)
+		if (Pv.z < 0 && Pv.x < 0)
 		{
 			newPos.x -= sqrt(xpow2)*speed;
 			newPos.z += sqrt(1 - xpow2)*speed;
-			cam->camPos.x -= sqrt(xpow2)*speed;
-			cam->camPos.z += sqrt(1 - xpow2)*speed;
 		}
 		//IV
-		if (v.z < 0 && v.x >= 0)
+		if (Pv.z < 0 && Pv.x >= 0)
 		{
 			newPos.x -= sqrt(xpow2)*speed;
 			newPos.z -= sqrt(1 - xpow2)*speed;
-			cam->camPos.x -= sqrt(xpow2)*speed;
-			cam->camPos.z -= sqrt(1 - xpow2)*speed;
 		}
 		break;
 	}
@@ -116,43 +102,35 @@ void Player::move(Dir dir)
 	case right:
 	{
 		//I
-		if (v.z >= 0 && v.x >= 0)
+		if (Pv.z >= 0 && Pv.x >= 0)
 		{
 			newPos.x -= sqrt(xpow2)*speed;
 			newPos.z += sqrt(1 - xpow2)*speed;
-			cam->camPos.x -= sqrt(xpow2)*speed;
-			cam->camPos.z += sqrt(1 - xpow2)*speed;
 		}
 		//II
-		if (v.z >= 0 && v.x < 0)
+		if (Pv.z >= 0 && Pv.x < 0)
 		{
 			newPos.x -= sqrt(xpow2)*speed;
 			newPos.z -= sqrt(1 - xpow2)*speed;
-			cam->camPos.x -= sqrt(xpow2)*speed;
-			cam->camPos.z -= sqrt(1 - xpow2)*speed;
 		}
 		//III
-		if (v.z < 0 && v.x < 0)
+		if (Pv.z < 0 && Pv.x < 0)
 		{
 			newPos.x += sqrt(xpow2)*speed;
 			newPos.z -= sqrt(1 - xpow2)*speed;
-			cam->camPos.x += sqrt(xpow2)*speed;
-			cam->camPos.z -= sqrt(1 - xpow2)*speed;
 		}
 		//IV
-		if (v.z < 0 && v.x >= 0)
+		if (Pv.z < 0 && Pv.x >= 0)
 		{
 			newPos.x += sqrt(xpow2)*speed;
 			newPos.z += sqrt(1 - xpow2)*speed;
-			cam->camPos.x += sqrt(xpow2)*speed;
-			cam->camPos.z += sqrt(1 - xpow2)*speed;
 		}
 		break;
 	}
 	}
-	//PxTransform pose(PxVec3(pos.x, pos.y, pos.z), box->getGlobalPose().q);
 	PxTransform pose(newPos, box->getGlobalPose().q);
 	box->setGlobalPose(pose);
+	cam->look(Vec3(newPos.x, newPos.y, newPos.z));
 }
 
 void Player::look(const float& x, const float& y)
@@ -246,7 +224,7 @@ void Player::setState(stat state)
 	}
 }
 
-void Player::setBox(PxRigidBody* actor)
+void Player::setBox(PxRigidDynamic* actor)
 {
 	box = actor;
 }
@@ -288,12 +266,11 @@ float Player::moveTimer()
 //CHECK for death AND sync player pos (Vec3) with PhysX pos (PxVec3) (Should be on PxVec3 instead)
 void Player::update()
 {
+	
 	box->setLinearVelocity(PxVec3(0, 0, 0));
-	box->setAngularVelocity(PxVec3(0, 0, 0));
+	box->setMaxAngularVelocity(0);
 	PxTransform pose = box->getGlobalPose();
-	//pos.x = pose.p.x;
-	//pos.y = pose.p.y;
-	//pos.z = pose.p.z;
+
 	idleY += moveTimer();
 
 	if (pose.p.y < -4 || hp <= 0)

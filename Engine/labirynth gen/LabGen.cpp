@@ -8,14 +8,14 @@ LabGen::LabGen()
 LabGen::LabGen(const Vec3& v)
 {
 	size = v.y != 0 ? Vec3(v.x, 0, v.y) : Vec3(v.x, 0, v.z);
-	initialize();
+	init();
 }
 
 //params: size X, size Z
 LabGen::LabGen(const float &sizeX, const float &sizeZ)
 {
 	size = Vec3(sizeX, 0, sizeZ);
-	initialize();
+	init();
 }
 
 LabGen::~LabGen()
@@ -23,7 +23,7 @@ LabGen::~LabGen()
 	field.clear();
 }
 
-void LabGen::initialize()
+void LabGen::init()
 {
 	int tmp = 0;
 
@@ -39,11 +39,11 @@ void LabGen::initialize()
 			field.push_back(LabField(Vec3( field[(ii%int(size.x))-1].pos.x + LabField::size, pos.y , tmp * LabField::size)));
 	}
 
-	setWalls(0);
+	setWall(0);
 	optWalls();
 }
 
-void LabGen::SetWalls(PxRigidStatic* (*createStatic)(const PxVec3&, const float&, const PxVec3&, const PxGeometry&))
+void LabGen::setWall(PxRigidStatic* (*createStatic)(const PxVec3&, const float&, const PxVec3&, const PxGeometry&))
 {
 	for (int ii = 0; ii < field.size(); ii++)
 	{
@@ -139,7 +139,7 @@ void LabGen::render()
 
 //WEST AND EAST ARE SWAPPED!! (Mistakes were made...) 
 //It sets "virtual" walls
-void LabGen::setWalls(const int& i)
+void LabGen::setWall(const int& i)
 {
 	while (true)
 	{
@@ -154,7 +154,7 @@ void LabGen::setWalls(const int& i)
 					field[i].used = true;
 					field[i].w = false;
 					field[i + 1].e = false;
-					setWalls(i + 1);
+					setWall(i + 1);
 				}
 			}
 		}
@@ -168,7 +168,7 @@ void LabGen::setWalls(const int& i)
 					field[i].used = true;
 					field[i].s = false;
 					field[i + int(size.x)].n = false;
-					setWalls(i + int(size.x));
+					setWall(i + int(size.x));
 				}
 			}
 		}
@@ -182,7 +182,7 @@ void LabGen::setWalls(const int& i)
 					field[i].used = true;
 					field[i].n = false;
 					field[i - int(size.x)].s = false;
-					setWalls(i - int(size.x));
+					setWall(i - int(size.x));
 				}
 			}
 		}
@@ -197,7 +197,7 @@ void LabGen::setWalls(const int& i)
 
 					field[i].e = false;
 					field[i - 1].w = false;
-					setWalls(i - 1);
+					setWall(i - 1);
 
 				}
 			}
@@ -239,4 +239,14 @@ void LabGen::optWalls()
 			field[ii].s = false;
 		}
 	}
+}
+
+int LabGen::getSize()
+{
+	return size.x*size.z;
+}
+
+Vec3 LabGen::getF_pos(const int& ii)
+{
+	return field[ii].pos;
 }

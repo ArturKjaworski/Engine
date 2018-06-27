@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "player/Player.h"
-#include "PickUp_Obj.h"
+#include "Objects/Interactable_Obj.h"
+//#include "Objects/PickUp_Obj.h"
+//#include "Objects/Coin.h"
 #include "graphics classes/Targa.hpp"
 #include "graphics classes/ThreeMaxLoader.h"
 #include "labirynth gen/LabGen.h"
@@ -28,7 +30,7 @@ LabGen maze;
 //
 Player* player;
 //
-vector<PickUp_Obj*> PU_objects;
+vector<Interactable_Obj*> PU_objects;        //? not used in game del later
 #pragma endregion
 
 #pragma region light vars
@@ -51,7 +53,7 @@ PxPhysics*				gPhysics = NULL;
 PxDefaultCpuDispatcher*	gDispatcher = NULL;
 PxScene*				gScene = NULL;
 
-PxRigidBody* createDActor(const PxVec3& pos, const float& angle,const PxVec3& axis, const PxGeometry& geometry)
+PxRigidDynamic* createDActor(const PxVec3& pos, const float& angle,const PxVec3& axis, const PxGeometry& geometry)
 {
 	PxQuat kwat(angle*PI/180, axis);
 	PxTransform t(pos, kwat);
@@ -110,6 +112,15 @@ void compileModel(const obj_type& object, const int& texId)
 	glEnd();
 }
 
+template <class T>
+void addObj(const Vec3& pos, const string& name, const int& meshId, const PxGeometry& box)
+{
+	T* ob = new T(pos, name, meshId);
+	ob->setBox(createDActor(PxVec3(pos.x, pos.y+4, pos.z), 0, PxVec3(0, 0, 0), box));
+	PU_objects.push_back(ob);
+}
+
+
 void init()
 {
 #pragma region enable
@@ -162,13 +173,20 @@ void init()
 #pragma region init objects
 	//labirynth
 	maze = LabGen(labSizeX, labSizeZ);
-	maze.SetWalls(&createSActor);
+	maze.setWall(&createSActor);
 
 	//sky, ground
-	PxBoxGeometry plane(100, 0.02, 100);
-	ground = createSActor(PxVec3(0, 0, 0),0,PxVec3(0,0,0),plane);
+	PxBoxGeometry plane(LabField::size/2 *labSizeX, 0.02, LabField::size / 2 * labSizeZ);
+	ground = createSActor(PxVec3(-LabField::size / 2 + labSizeX*LabField::size /2, 0, -LabField::size / 2+ labSizeZ*LabField::size / 2),0,PxVec3(0,0,0),plane);
 	sky = createSActor(PxVec3(0, 50, 0), 0, PxVec3(0, 0, 0), plane);
 	
+	PxSphereGeometry sphere(1);
+	for (int ii = 0; ii < maze.getSize(); ++ii)
+	{
+		addObj<Coin>(Vec3(maze.getF_pos(ii)), "coin", -1, sphere);
+		PU_objects[ii]->getBox()->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+	}
+
 #pragma region player
 
 	player = new Player(10.f, PU_Obj + 0);
@@ -183,13 +201,6 @@ void init()
 	ShowCursor(false);
 }
 
-void addObj(const Vec3& pos, const string& name, const int& meshId)
-{
-	PickUp_Obj* ob = new PickUp_Obj(pos, name, meshId);
-	PxSphereGeometry sphere(1);
-	ob->setBox(createDActor(PxVec3(pos.x, pos.y, pos.z),0, PxVec3(0, 0, 0), sphere));
-	PU_objects.push_back(ob);
-}
 
 void help()
 {
@@ -251,12 +262,13 @@ void renderObj()
 
 		glColor4f(0, 1, 0, 1);
 		glBegin(GL_QUADS);
-		glTexCoord2f(0,0);		glVertex3f(0-LabField::size / 2, 0, 0 - LabField::size / 2);
-		glTexCoord2f(0, 25);	glVertex3f(0 - LabField::size / 2, 0, labSizeZ*LabField::size);
-		glTexCoord2f(25, 25);	glVertex3f(labSizeX*LabField::size, 0, labSizeZ*LabField::size);
-		glTexCoord2f(25, 0);	glVertex3f(labSizeX*LabField::size, 0, 0 - LabField::size/2);
+		glTexCoord2f(0,0);		glVertex3f(0- LabField::size * (labSizeX )/2, 0, 0 - LabField::size * (labSizeZ) / 2);
+		glTexCoord2f(0, 25);	glVertex3f(0 - LabField::size * (labSizeX) / 2, 0, LabField::size * (labSizeZ) / 2);
+		glTexCoord2f(25, 25);	glVertex3f(LabField::size * (labSizeX) / 2, 0, LabField::size * (labSizeZ) / 2);
+		glTexCoord2f(25, 0);	glVertex3f(LabField::size * (labSizeX) / 2, 0, 0 - LabField::size * (labSizeZ) / 2);
 		glEnd();
 	glPopMatrix();
+
 	
 	//sky
 	glBindTexture(GL_TEXTURE_2D, tex[1]);
@@ -284,7 +296,10 @@ void renderObj()
 			pose = PU_objects[ii]->getBox()->getGlobalPose();
 			SetupGLMatrix(pose);
 			glColor4f(1, 0, 1, 1);
-			glCallList(PU_objects[ii]->getModel());			//mesh
+			if (PU_objects[ii]->getModel() > -1)
+				glCallList(PU_objects[ii]->getModel());			//mesh
+			else
+				glutSolidSphere(1, 40, 40);
 		glPopMatrix();
 	}
 
@@ -310,7 +325,6 @@ void render()
 
 	gScene->simulate(SIM_TIME);
 	gScene->fetchResults(true);
-	
 	player->update();
 	if (player->cam->camType == Camera::TPP)
 		gluLookAt(player->cam->getPos().x, player->cam->getPos().y, player->cam->getPos().z,
@@ -348,7 +362,6 @@ void reshape(int w, int h)
 	_height = h;
 }
 
-
 void keyboard(unsigned char key, int x, int y)
 {
 	PX_UNUSED(x);
@@ -369,12 +382,8 @@ void keyboard(unsigned char key, int x, int y)
 
 	switch (key)
 	{
-	case '1':
-		system("cls");
-		addObj(player->getforward() , "czaszka", PU_Obj + 0);
-		cout << "dodano: "<<PU_objects[PU_objects.size()-1]->getName();
-		break;
 
+#pragma region player control
 	case 'w': case 'W':
 		player->move(Player::front);
 		break;
@@ -401,12 +410,12 @@ void keyboard(unsigned char key, int x, int y)
 	case 'z':
 		player->zoom('-');
 		break;
+#pragma endregion
 
 	case 'Q':
 	case 'q':
 	case 27:
 		exit(0);
-		//break;
 
 	default:
 		help();
@@ -454,6 +463,15 @@ void timer(int val)
 void ex()
 {
 	delete player;
+
+	for (int i = 0; i<PU_objects.size(); ++i)
+	{
+		if (PU_objects[i] != nullptr)
+		{
+			delete (PU_objects[i]);
+			PU_objects[i] = nullptr;
+		}
+	}
 	PU_objects.clear();
 
 	//physx

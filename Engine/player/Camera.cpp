@@ -29,11 +29,14 @@ Camera::~Camera()
 //on key for now.  return alpha channel
 float Camera::zoom(const int& val)
 {
-	
 	camDist+=val;
-	if (camDist <= 0)
+
+	if (camDist >= 40)
+		camDist = 40;
+
+	if (camDist <= 1)
 	{
-		camDist = 0.1;
+		camDist = 1;
 		if (camType != FPP)
 			camType = FPP;
 	}
@@ -47,7 +50,7 @@ float Camera::zoom(const int& val)
 	case 0:
 		return 0;
 	case 1:
-		return 0.1;
+		return 0;
 	case 2:
 		return 0.5;
 	default:
@@ -78,10 +81,10 @@ void Camera::look(const float& rotx, const float& roty,const Vec3& pos)
 
 	look(pos);
 
-	//if (camPos.y <= 0)
-	//{
-	//	camPos.y = 0;
-	//}
+	if (camPos.y <= 0)
+	{
+		camPos.y = 0;
+	}
 	mMove = true;
 	}
 	else

@@ -4,8 +4,8 @@
 class Player
 {
 public:
-	Player(const int&);
-	Player(const float&, const int&);
+	Player(const int& meshId);
+	Player(const float& camDist, const int& mesh);
 	~Player();
 
 	int hp;
@@ -17,12 +17,12 @@ public:
 
 float idleY = 0;
 private:
-	//Vec3 pos;
 	Vec3 rot;
 	Vec3 forward;
 	float alpha;
+	unsigned int ammo;
 
-	PxRigidBody* box = nullptr;
+	PxRigidDynamic* box = nullptr;
 	int model;
 
 public:
@@ -42,21 +42,27 @@ public:
 		crouch
 	}; stat state;
 
-	void move(Dir);
-	void look(const float&, const float&);
-	void zoom(const char&);
-	void mouse(const float&, const float&);
+	//dir: front left right back
+	void move(Dir dir);
+	
+	void look(const float& x, const float& y);
+	
+	//val: '+', '-'
+	void zoom(const char& val);
+	void mouse(const float& rotx, const float& roty);
 
-	void shoot(const Vec3&);
+	//v: direction vector (dont need to be normalized)
+	void shoot(const Vec3& v);
 	void interact();
 	float moveTimer();
 	void onDeath();
-	void getHit(const int&);
+	//val: hp lost
+	void getHit(const int& val);
 
 	void setForward();
-	void setState(stat);
-	void setBox(PxRigidBody* actor);
-
+	//state: idle, walk, run, swim, crouch
+	void setState(stat state);
+	void setBox(PxRigidDynamic* actor);
 
 	void update();
 
