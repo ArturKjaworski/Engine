@@ -266,9 +266,9 @@ float Player::moveTimer()
 //CHECK for death AND sync player pos (Vec3) with PhysX pos (PxVec3) (Should be on PxVec3 instead)
 void Player::update()
 {
-	
 	box->setLinearVelocity(PxVec3(0, 0, 0));
 	box->setMaxAngularVelocity(0);
+	//box->setActorFlag(PxActorFlag::eDISABLE_GRAVITY,true);
 	PxTransform pose = box->getGlobalPose();
 
 	idleY += moveTimer();
@@ -277,6 +277,12 @@ void Player::update()
 	{
 		onDeath();
 	}
+	if (pose.p.y > 5)
+	{
+		pose.p.y = 4;
+		box->setGlobalPose(pose);
+	}
+
 }
 
 Vec3 Player::getRot()
@@ -305,7 +311,7 @@ int Player::getModel()
 	return model;
 }
 
-PxRigidBody* Player::getBox()
+const PxRigidBody& Player::getBox()
 {
-	return box;
+	return *box;
 }

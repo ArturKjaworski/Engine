@@ -6,11 +6,12 @@ Coin::Coin()
 	name = new string("New Coin");
 	amount = 1;
 	collected = false;
-//	pos = Vec3(0, 0, 0);
+	pos = Vec3(0, 0, 0);
 }
 
 Coin::Coin(const string& _name)
 {
+	pos = Vec3(0, 0, 0);
 	name = new string(_name);
 	collected = false;
 }
@@ -19,7 +20,6 @@ Coin::Coin(const string &_name, const Vec3& _pos, const int & _amount)
 {
 	*name = _name;
 	pos = Vec3(_pos);
-	
 	amount = _amount;
 	collected = false;
 }

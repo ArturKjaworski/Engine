@@ -16,13 +16,14 @@ public:
 	Camera* cam;
 
 float idleY = 0;
+PxRigidDynamic* box = nullptr;
 private:
 	Vec3 rot;
 	Vec3 forward;
 	float alpha;
 	unsigned int ammo;
 
-	PxRigidDynamic* box = nullptr;
+	
 	int model;
 
 public:
@@ -71,6 +72,6 @@ public:
 	Vec3 getforward();
 	float getAlpha();
 	int getModel();
-	PxRigidBody* getBox();
+	const PxRigidBody& getBox();
 };
 

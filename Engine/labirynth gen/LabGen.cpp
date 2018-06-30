@@ -1,5 +1,8 @@
 #include "../stdafx.h"
 #include "LabGen.h"
+#include "../Game.h"
+
+
 LabGen::LabGen()
 {
 }
@@ -48,16 +51,16 @@ void LabGen::setWall(PxRigidStatic* (*createStatic)(const PxVec3&, const float&,
 	for (int ii = 0; ii < field.size(); ii++)
 	{
 		if (field[ii].n)
-			field[ii].setWall(createStatic(PxVec3(field[ii].pos.x , field[ii].pos.y, field[ii].pos.z - LabField::size / 2), 0, PxVec3(0, 0, 0), PxBoxGeometry(10, LabField::size / 2, 1)));
+			field[ii].setWall(createStatic(PxVec3(field[ii].pos.x, field[ii].pos.y + LabField::size / 2, field[ii].pos.z - LabField::size / 2), 0, PxVec3(0, 0, 0), PxBoxGeometry(12, LabField::size, 1.5)));
 
 		if (field[ii].s)
-			field[ii].setWall(createStatic(PxVec3(field[ii].pos.x, field[ii].pos.y, field[ii].pos.z + LabField::size / 2), 0, PxVec3(0, 0, 0), PxBoxGeometry(10, LabField::size / 2, 1))); 
-		
+			field[ii].setWall(createStatic(PxVec3(field[ii].pos.x, field[ii].pos.y + LabField::size / 2, field[ii].pos.z + LabField::size / 2), 0, PxVec3(0, 0, 0), PxBoxGeometry(12, LabField::size, 1.5)));
+
 		if (field[ii].e)
-			field[ii].setWall(createStatic(PxVec3(field[ii].pos.x - LabField::size / 2, field[ii].pos.y, field[ii].pos.z), 0, PxVec3(0, 0, 0), PxBoxGeometry(1, LabField::size / 2, 10)));
-	
+			field[ii].setWall(createStatic(PxVec3(field[ii].pos.x - LabField::size / 2, field[ii].pos.y + LabField::size / 2, field[ii].pos.z), 0, PxVec3(0, 0, 0), PxBoxGeometry(1.5, LabField::size, 12)));
+
 		if (field[ii].w)
-			field[ii].setWall(createStatic(PxVec3(field[ii].pos.x + LabField::size / 2, field[ii].pos.y, field[ii].pos.z), 0, PxVec3(0, 0, 0), PxBoxGeometry(1, LabField::size / 2, 10)));
+			field[ii].setWall(createStatic(PxVec3(field[ii].pos.x + LabField::size / 2, field[ii].pos.y+LabField::size/2, field[ii].pos.z), 0, PxVec3(0, 0, 0), PxBoxGeometry(1.5, LabField::size, 12)));
 	}
 }
 
