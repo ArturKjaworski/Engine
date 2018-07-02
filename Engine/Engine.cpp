@@ -30,6 +30,7 @@ void init()
 	glEnable(GL_LIGHT0);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 #pragma endregion
+
 	if (game ==nullptr)
 		game = new Game();
 	else
@@ -38,7 +39,6 @@ void init()
 		game = nullptr;
 		game = new Game();
 	}
-
 	glutWarpPointer(_width / 2, _height / 2);
 	ShowCursor(false);
 }

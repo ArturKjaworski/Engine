@@ -148,6 +148,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CollisionCallback.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="graphics classes\Targa.hpp" />
     <ClInclude Include="labirynth gen\LabField.h" />
@@ -162,6 +163,7 @@
     <ClInclude Include="Vec3.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CollisionCallback.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="graphics classes\Targa.cpp">

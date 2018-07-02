@@ -16,13 +16,12 @@ public:
 	Camera* cam;
 
 float idleY = 0;
-PxRigidDynamic* box = nullptr;
+PxRigidDynamic* actor = nullptr;
 private:
 	Vec3 rot;
 	Vec3 forward;
 	float alpha;
 	unsigned int ammo;
-
 	
 	int model;
 
@@ -55,6 +54,7 @@ public:
 	//v: direction vector (dont need to be normalized)
 	void shoot(const Vec3& v);
 	void interact();
+	void collect();
 	float moveTimer();
 	void onDeath();
 	//val: hp lost
@@ -72,6 +72,6 @@ public:
 	Vec3 getforward();
 	float getAlpha();
 	int getModel();
-	const PxRigidBody& getBox();
+	const PxRigidActor* getBox();
 };
 

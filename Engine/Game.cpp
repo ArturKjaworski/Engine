@@ -25,11 +25,14 @@ Game::Game()
 
 	gDispatcher = PxDefaultCpuDispatcherCreate(1);
 	sceneDesc.cpuDispatcher = gDispatcher;
-
-	sceneDesc.filterShader = PxDefaultSimulationFilterShader;
+	
+	sceneDesc.filterShader = filtershader;
+	sceneDesc.simulationEventCallback = this;
 	gScene = gPhysics->createScene(sceneDesc);
+	
 
 	init();
+	
 }
 
 Game::~Game()
@@ -52,6 +55,8 @@ Game::~Game()
 	gPhysics->release();
 	gFoundation->release();
 }
+
+
 
 void Game::init()
 {
@@ -79,7 +84,7 @@ void Game::init()
 	maze = LabGen(labSizeX, labSizeZ);
 	maze.setWall(&Game::createSActor);
 
-	//sky, ground
+	////sky, ground
 	PxBoxGeometry plane(LabField::size / 2 * labSizeX, 0.02, LabField::size / 2 * labSizeZ);
 	ground = createSActor(PxVec3(-LabField::size / 2 + labSizeX * LabField::size / 2, 0, -LabField::size / 2 + labSizeZ * LabField::size / 2), 0, PxVec3(0, 0, 0), plane);
 	sky = createSActor(PxVec3(0, 50, 0), 0, PxVec3(0, 0, 0), plane);
@@ -87,7 +92,7 @@ void Game::init()
 	PxSphereGeometry sphere(1);
 	for (int ii = 0; ii < maze.getSize(); ++ii)
 	{
-		addObj<Coin>(Vec3(maze.getF_pos(ii)), "coin", -1, sphere);
+		addObj<Coin>("coin",Vec3(maze.getF_pos(ii)), -1, sphere, FilterGroup::eCoin, FilterGroup::ePlayer);
 		PU_objects[ii]->getBox()->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
 	}
 
@@ -96,14 +101,16 @@ void Game::init()
 	{
 		player = new Player(10.f, PU_Obj + 0);
 		PxBoxGeometry box(1, 4, 1);
-		player->setBox(createDActor(PxVec3(player->getPos().x, player->getPos().y, player->getPos().z), 0.f, PxVec3(0, 1, 0), box));
+		player->setBox(createDActor("player",PxVec3(player->getPos().x, player->getPos().y, player->getPos().z), 0.f, PxVec3(0, 1, 0), box, FilterGroup::ePlayer, FilterGroup::eCoin));
+		
 	}
 	else
 	{
 		delete player;
 		player = new Player(10.f, PU_Obj + 0);
 		PxBoxGeometry box(1, 4, 1);
-		player->setBox(createDActor(PxVec3(player->getPos().x, player->getPos().y, player->getPos().z), 0.f, PxVec3(0, 1, 0), box));
+		player->setBox(createDActor("player",PxVec3(player->getPos().x, player->getPos().y, player->getPos().z), 0.f, PxVec3(0, 1, 0), box, FilterGroup::ePlayer, FilterGroup::eCoin));
+		
 	}
 
 #pragma endregion
@@ -199,7 +206,7 @@ void Game::compileModel(const obj_type & object, const int & texId)
 }
 #pragma endregion
 
-#pragma region render obejcts
+#pragma region render objects
 void Game::renderObj()
 {
 	PxTransform pose;
@@ -224,7 +231,7 @@ void Game::renderObj()
 	glColor4f(1, 1, 1, 1);
 	glPushMatrix();
 	pose = sky->getGlobalPose();
-	pose.p = player->getBox().getGlobalPose().p;
+	pose.p = player->getBox()->getGlobalPose().p;
 	SetupGLMatrix(pose);
 	glRotatef(-90, 1, 0, 0);
 	sphere1 = gluNewQuadric();
@@ -256,7 +263,7 @@ void Game::renderObj()
 	if (player->cam->camType == Camera::TPP)
 	{
 		glPushMatrix();
-		pose = player->getBox().getGlobalPose();
+		pose = player->getBox()->getGlobalPose();
 		SetupGLMatrix(pose);
 		glTranslatef(0, player->idleY, 0);
 		glColor4f(0.8, 0.4, 0, player->getAlpha());
@@ -275,19 +282,120 @@ PxRigidStatic * Game::createSActor(const PxVec3 & pos, const float & angle, cons
 
 	PxMaterial* m = gPhysics->createMaterial(.5f, .5f, .5f);
 	PxRigidStatic* actor = PxCreateStatic(*gPhysics, t, geometry, *m);
-
+	
 	gScene->addActor(*actor);
 	return actor;
 }
-PxRigidDynamic * Game::createDActor(const PxVec3 & pos, const float & angle, const PxVec3 & axis, const PxGeometry & geometry)
+PxRigidDynamic* Game::createDActor(const string& _name, const PxVec3 & pos, const float & angle, const PxVec3 & axis, const PxGeometry & geometry, PxU32 filterGroup, PxU32 filterMask)
 {
+	PxFilterData filterData;
+	filterData.word0 = filterGroup; // word0 = own ID
+	filterData.word1 = filterMask;  // word1 = ID mask to filter pairs that trigger a contact callback;
+
 	PxQuat kwat(angle*PI / 180, axis);
 	PxTransform t(pos, kwat);
 
 	PxMaterial* m = gPhysics->createMaterial(0.5, 0.5, 0.5);
-	PxRigidDynamic* actor = PxCreateDynamic(*gPhysics, t, geometry, *m, 10.0f);
+
+	PxRigidDynamic* actor = PxCreateDynamic(*gPhysics, t, geometry,*m, 10.0f);
+
+	actor->userData = new string(_name);
+
+	const PxU32 numShapes = actor->getNbShapes();
+	PxShape** shapes = (PxShape**)malloc(sizeof(PxShape*)*numShapes);
+	
+	actor->getShapes(shapes, numShapes);
+	for (int ii = 0; ii < numShapes; ++ii)
+	{
+		PxShape* shape = shapes[ii];
+		shape->setSimulationFilterData(filterData);
+	}
+	free(shapes);
+	
 	gScene->addActor(*actor);
 
 	return actor;
 }
 #pragma endregion
+
+PxFilterFlags Game::filtershader(
+	PxFilterObjectAttributes attributes0, PxFilterData filterData0, 
+	PxFilterObjectAttributes attributes1, PxFilterData filterData1, 
+	PxPairFlags & pairFlags, const void * constantBlock, PxU32 constantBlockSize)
+{
+	//
+	// let triggers through
+	if (PxFilterObjectIsTrigger(attributes0) || PxFilterObjectIsTrigger(attributes1))
+	{
+		pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
+		return PxFilterFlag::eDEFAULT;
+	}
+	// generate contacts for all that were not filtered above
+	pairFlags = PxPairFlag::eCONTACT_DEFAULT;
+
+	// trigger the contact callback for pairs (A,B) where 
+	// the filtermask of A contains the ID of B and vice versa.
+	if ((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1))
+	{
+		pairFlags |= PxPairFlag::eNOTIFY_TOUCH_FOUND;
+	}
+
+	return PxFilterFlag::eDEFAULT;
+
+}
+
+void Game::onContact(const PxContactPairHeader & pairHeader, const PxContactPair * pairs, PxU32 nbPairs)
+{
+	
+	for (PxU32 i = 0; i < nbPairs; i++)
+	{
+		const PxContactPair& cp = pairs[i];
+
+		if (cp.events & PxPairFlag::eNOTIFY_TOUCH_FOUND)
+		{
+			//PxRigidActor* ac = pairHeader.actors[0];
+			PxRigidDynamic* ac0 = reinterpret_cast<PxRigidDynamic*>(pairHeader.actors[0]);
+			PxRigidDynamic* ac1 = reinterpret_cast<PxRigidDynamic*>(pairHeader.actors[1]);
+		
+			//if player
+			if ((ac0 == player->getBox()) || (ac1 == player->getBox()))
+			{
+				PxRigidDynamic* otherActor = ((ac0 == player->getBox())) ?
+					ac1 : ac0;
+
+				string* s = reinterpret_cast<string*>(otherActor->userData);
+				
+				//if coin
+				if (*s == "coin" )
+				{
+					const PxU32 numShapes = otherActor->getNbShapes();
+					PxShape** shapes = (PxShape**)malloc(sizeof(PxShape*)*numShapes);
+
+					otherActor->getShapes(shapes, numShapes);
+					for (int ii = 0; ii < numShapes; ++ii)
+					{
+						PxShape* shape = shapes[ii];
+						shape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
+						
+					}
+					free(shapes);
+					
+					//give ammo to player
+					player->collect();
+				}
+				else  //if monster
+				{
+					//monster attack
+					//player get hit
+				}
+			}
+			else //pair: monster - coin      
+			{
+				//ignore collision
+			}
+			break;
+			
+		}
+	}
+}
+

@@ -28,14 +28,12 @@ Interactable_Obj:: ~Interactable_Obj()
 		delete name;
 		name = nullptr;
 	}
-
 }
 
 void Interactable_Obj::interact()
 {
-	
-
 }
+
 const string Interactable_Obj::getName() 
 {
 	return *name;

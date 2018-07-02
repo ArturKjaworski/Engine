@@ -26,6 +26,7 @@ Player::Player(const float& camDist, const int& mesh)
 	hp = 100;
 	stamina = 100;
 	mana = 100;
+	ammo = 10;
 	speed = 1;
 	state = idle;
 
@@ -53,7 +54,7 @@ void Player::move(Dir dir)
 	//x^2 + z^2 = 1		 }   (x and z normalized)
 	//					  }
 	//v.x*x + v.z*z = 0  } 
-	PxVec3 newPos = box->getGlobalPose().p;
+	PxVec3 newPos = actor->getGlobalPose().p;
 	float xpow2 = pow(Pv.z, 2) / (pow(Pv.z, 2) + pow(Pv.x, 2));
 
 	switch (dir)
@@ -128,8 +129,8 @@ void Player::move(Dir dir)
 		break;
 	}
 	}
-	PxTransform pose(newPos, box->getGlobalPose().q);
-	box->setGlobalPose(pose);
+	PxTransform pose(newPos, actor->getGlobalPose().q);
+	actor->setGlobalPose(pose);
 	cam->look(Vec3(newPos.x, newPos.y, newPos.z));
 }
 
@@ -141,9 +142,9 @@ void Player::look(const float& x, const float& y)
 		rot.x += x;
 		rot.y -= y;
 
-		PxTransform pose = box->getGlobalPose();
+		PxTransform pose = actor->getGlobalPose();
 		pose.q = PxQuat((-rot.x)*PI / 180, PxVec3(0, 1, 0));
-		box->setGlobalPose(pose);
+		actor->setGlobalPose(pose);
 
 		cam->look(x, y, Vec3(pose.p.x, pose.p.y, pose.p.z));
 
@@ -157,7 +158,7 @@ void Player::look(const float& x, const float& y)
 void Player::setForward()
 {
 	//set new forward vector
-	forward = Vec3(box->getGlobalPose().p.x, box->getGlobalPose().p.y, box->getGlobalPose().p.z);
+	forward = Vec3(actor->getGlobalPose().p.x, actor->getGlobalPose().p.y, actor->getGlobalPose().p.z);
 	forward -= cam->camPos;
 	forward.normalize();
 	rot = cam->camRot;
@@ -165,7 +166,7 @@ void Player::setForward()
 
 void Player::mouse(const float &rotx, const float& roty)
 {
-	cam->look(rotx, roty, Vec3(box->getGlobalPose().p.x, box->getGlobalPose().p.y, box->getGlobalPose().p.z));
+	cam->look(rotx, roty, Vec3(actor->getGlobalPose().p.x, actor->getGlobalPose().p.y, actor->getGlobalPose().p.z));
 }
 
 void Player::shoot(const Vec3& v)
@@ -188,7 +189,7 @@ void Player::zoom(const char& val)
 		alpha = cam->zoom(-1);
 		break;
 	}
-	cam->look(Vec3(box->getGlobalPose().p.x, box->getGlobalPose().p.y, box->getGlobalPose().p.z));
+	cam->look(Vec3(actor->getGlobalPose().p.x, actor->getGlobalPose().p.y, actor->getGlobalPose().p.z));
 }
 
 void Player::setState(stat state)
@@ -224,9 +225,9 @@ void Player::setState(stat state)
 	}
 }
 
-void Player::setBox(PxRigidDynamic* actor)
+void Player::setBox(PxRigidDynamic* _actor)
 {
-	box = actor;
+	actor = _actor;
 }
 
 void Player::onDeath()
@@ -244,6 +245,12 @@ void Player::getHit(const int& val)
 void Player::interact()
 {
 
+}
+
+void Player::collect()
+{
+	ammo += 10;
+	cout << ammo << endl;
 }
 
 #pragma region basic animation timer
@@ -266,10 +273,10 @@ float Player::moveTimer()
 //CHECK for death AND sync player pos (Vec3) with PhysX pos (PxVec3) (Should be on PxVec3 instead)
 void Player::update()
 {
-	box->setLinearVelocity(PxVec3(0, 0, 0));
-	box->setMaxAngularVelocity(0);
-	//box->setActorFlag(PxActorFlag::eDISABLE_GRAVITY,true);
-	PxTransform pose = box->getGlobalPose();
+	actor->setLinearVelocity(PxVec3(0, 0, 0));
+	actor->setMaxAngularVelocity(0);
+	//actor->setActorFlag(PxActorFlag::eDISABLE_SIMULATION,true);
+	PxTransform pose = actor->getGlobalPose();
 
 	idleY += moveTimer();
 
@@ -280,7 +287,7 @@ void Player::update()
 	if (pose.p.y > 5)
 	{
 		pose.p.y = 4;
-		box->setGlobalPose(pose);
+		actor->setGlobalPose(pose);
 	}
 
 }
@@ -292,7 +299,7 @@ Vec3 Player::getRot()
 
 Vec3 Player::getPos()			//for now... change to PxVec3 in the future
 {
-	PxVec3 v = box != nullptr ? box->getGlobalPose().p : PxVec3(0, 3, 0);
+	PxVec3 v = actor != nullptr ? actor->getGlobalPose().p : PxVec3(0, 3, 0);
 	return Vec3(v.x, v.y, v.z);
 }
 
@@ -311,7 +318,7 @@ int Player::getModel()
 	return model;
 }
 
-const PxRigidBody& Player::getBox()
+const PxRigidActor* Player::getBox()
 {
-	return *box;
+	return actor;
 }
