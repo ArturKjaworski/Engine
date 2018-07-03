@@ -1,5 +1,5 @@
 #pragma once
-//#include "CollisionCallback.h"
+
 #include "player/Player.h"
 #include "Objects/Interactable_Obj.h"
 #include "Objects/PickUp_Obj.h"
@@ -14,7 +14,20 @@ public:
 	Game();
 	~Game();
 
+	struct gameState
+	{
+		enum Enum
+		{
+			menu,
+				highscore,
+				options,
+				credits,
+			pauseMenu,
+			run
+		};
+	};
 	
+
 	struct FilterGroup
 	{
 		enum Enum

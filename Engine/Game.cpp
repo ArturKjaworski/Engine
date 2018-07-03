@@ -87,7 +87,7 @@ void Game::init()
 	maze = LabGen(labSizeX, labSizeZ);
 	maze.setWall(&Game::createSActor);
 
-	////sky, ground
+	//sky, ground
 	PxBoxGeometry plane(LabField::size / 2 * labSizeX, 0.02, LabField::size / 2 * labSizeZ);
 	ground = createSActor(PxVec3(-LabField::size / 2 + labSizeX * LabField::size / 2, 0, -LabField::size / 2 + labSizeZ * LabField::size / 2), 0, PxVec3(0, 0, 0), plane);
 	sky = createSActor(PxVec3(0, 50, 0), 0, PxVec3(0, 0, 0), plane);

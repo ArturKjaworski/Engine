@@ -1,40 +1,42 @@
-========================================================================
-    CONSOLE APPLICATION : Engine Project Overview
-========================================================================
+"Game" class - main game class: 
+	- has game objects (player, pickupObjects)
+	- collision callback
+	- creating world (physX world and rendering meshes)
+ 
+Player folder:
+	*Camera class:
+		- player's camera (movement, rotation, zoom in/out)
+	*Player class:
+		- player fields (e.g. hp, ammmo, camera object)
+		- player movement/interaction
+		- is holding hitBox(PhysX actor)
 
-AppWizard has created this Engine application for you.
+Objects folder:
+	* Interactable_Obj:
+		- root class
+		- has general purpose functions and fields
+	* PickUp_Obj
+		- derived from Interactable_Obj
+		- has functions for picking up objects
+	* Coin
+		- derived from PickUp_Obj
+		- final class for Coins (Ammo in that case)
 
-This file contains a summary of what you will find in each of the files that
-make up your Engine application.
+labirynth gen:
+	*LabGen class:
+		-generating maze
+		- has Labfield class objects
+	*Labfield class:
+		- has position
+		- control its own walls
+		
+graphics classes folder:
+	Targa:
+		- open .tga texture format for usage in app
+	ThreeMaxLoader:
+		- open .3ds model format for usage in app
 
-
-Engine.vcxproj
-    This is the main project file for VC++ projects generated using an Application Wizard.
-    It contains information about the version of Visual C++ that generated the file, and
-    information about the platforms, configurations, and project features selected with the
-    Application Wizard.
-
-Engine.vcxproj.filters
-    This is the filters file for VC++ projects generated using an Application Wizard. 
-    It contains information about the association between the files in your project 
-    and the filters. This association is used in the IDE to show grouping of files with
-    similar extensions under a specific node (for e.g. ".cpp" files are associated with the
-    "Source Files" filter).
-
-Engine.cpp
-    This is the main application source file.
-
-/////////////////////////////////////////////////////////////////////////////
-Other standard files:
-
-StdAfx.h, StdAfx.cpp
-    These files are used to build a precompiled header (PCH) file
-    named Engine.pch and a precompiled types file named StdAfx.obj.
-
-/////////////////////////////////////////////////////////////////////////////
-Other notes:
-
-AppWizard uses "TODO:" comments to indicate parts of the source code you
-should add to or customize.
-
-/////////////////////////////////////////////////////////////////////////////
+"Vec3" Class:
+	- create (x,y,z) vector
+	- has few overloaded operators
+	- can normalize 
