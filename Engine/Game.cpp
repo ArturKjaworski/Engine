@@ -37,6 +37,7 @@ Game::Game()
 
 Game::~Game()
 {
+	
 	delete player;
 
 	for (int i = 0; i<int(PU_objects.size()); ++i)
@@ -46,8 +47,10 @@ Game::~Game()
 			delete (PU_objects[i]);
 			PU_objects[i] = nullptr;
 		}
+		
 	}
 	PU_objects.clear();
+	PU_destroy.clear();
 
 	//physx
 	gScene->release();
@@ -134,6 +137,7 @@ void Game::update()
 			player->getPos().x, player->getPos().y + player->idleY, player->getPos().z,
 			0, 1, 0);
 
+	preRender();
 	renderObj();
 }
 
@@ -206,6 +210,28 @@ void Game::compileModel(const obj_type & object, const int & texId)
 }
 #pragma endregion
 
+//set object shape flag to correct state (e.g. simulation_shape flag to false when coin is collected)
+void Game::preRender()
+{
+	for (int ii = 0; ii < PU_destroy.size(); ++ii)
+	{
+		const PxU32 numShapes = PU_destroy[ii]->getNbShapes();
+		PxShape** shapes = (PxShape**)malloc(sizeof(PxShape*)*numShapes);
+
+		PU_destroy[ii]->getShapes(shapes, numShapes);
+		for (int ii = 0; ii < numShapes; ++ii)
+		{
+			PxShape* shape = shapes[ii];
+			shape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
+
+		}
+		free(shapes);
+	}
+
+	PU_destroy.clear();
+
+}
+
 #pragma region render objects
 void Game::renderObj()
 {
@@ -248,15 +274,27 @@ void Game::renderObj()
 	//PU objects
 	for (int ii = 0; ii < int(PU_objects.size()); ++ii)
 	{
-		glPushMatrix();
-		pose = PU_objects[ii]->getBox()->getGlobalPose();
-		SetupGLMatrix(pose);
-		glColor4f(1, 0, 1, 1);
-		if (PU_objects[ii]->getModel() > -1)
-			glCallList(PU_objects[ii]->getModel());			//mesh
-		else
-			glutSolidSphere(.5, 40, 40);
-		glPopMatrix();
+		if (PU_objects[ii]->isActive())
+		{
+			PxShape* shape;
+			PU_objects[ii]->getBox()->getShapes(&shape, 1);
+
+			if (shape->getFlags().isSet(PxShapeFlag::eSIMULATION_SHAPE) == false)
+				PU_objects[ii]->isActive(false);
+		}
+
+		if (PU_objects[ii]->isActive())
+		{
+			glPushMatrix();
+			pose = PU_objects[ii]->getBox()->getGlobalPose();
+			SetupGLMatrix(pose);
+			glColor4f(1, 0, 1, 1);
+			if (PU_objects[ii]->getModel() > -1)
+				glCallList(PU_objects[ii]->getModel());			//mesh
+			else
+				glutSolidSphere(.5, 40, 40);
+			glPopMatrix();
+		}
 	}
 
 	//character
@@ -353,7 +391,7 @@ void Game::onContact(const PxContactPairHeader & pairHeader, const PxContactPair
 
 		if (cp.events & PxPairFlag::eNOTIFY_TOUCH_FOUND)
 		{
-			//PxRigidActor* ac = pairHeader.actors[0];
+			
 			PxRigidDynamic* ac0 = reinterpret_cast<PxRigidDynamic*>(pairHeader.actors[0]);
 			PxRigidDynamic* ac1 = reinterpret_cast<PxRigidDynamic*>(pairHeader.actors[1]);
 		
@@ -368,17 +406,21 @@ void Game::onContact(const PxContactPairHeader & pairHeader, const PxContactPair
 				//if coin
 				if (*s == "coin" )
 				{
-					const PxU32 numShapes = otherActor->getNbShapes();
-					PxShape** shapes = (PxShape**)malloc(sizeof(PxShape*)*numShapes);
+				
+					PU_destroy.push_back(otherActor);
 
-					otherActor->getShapes(shapes, numShapes);
-					for (int ii = 0; ii < numShapes; ++ii)
-					{
-						PxShape* shape = shapes[ii];
-						shape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
-						
-					}
-					free(shapes);
+					//const PxU32 numShapes = otherActor->getNbShapes();
+					//PxShape** shapes = (PxShape**)malloc(sizeof(PxShape*)*numShapes);
+
+					//otherActor->getShapes(shapes, numShapes);
+					//for (int ii = 0; ii < numShapes; ++ii)
+					//{
+					//	PxShape* shape = shapes[ii];
+
+					//	//shape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
+					//	
+					//}
+					//free(shapes);
 					
 					//give ammo to player
 					player->collect();

@@ -17,6 +17,7 @@ public:
 
 float idleY = 0;
 PxRigidDynamic* actor = nullptr;
+
 private:
 	Vec3 rot;
 	Vec3 forward;

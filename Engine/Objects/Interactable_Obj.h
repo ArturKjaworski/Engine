@@ -14,6 +14,7 @@ protected:
 	GLint model;
 	GLuint tex;
 	Vec3 pos;
+	bool active = false;
 	PxRigidDynamic* box;
 	
 public:
@@ -24,5 +25,8 @@ public:
 	virtual int getModel();
 
 	virtual void setBox(PxRigidDynamic*);
+
+	bool isActive();
+	void isActive(bool _active);
 };
 

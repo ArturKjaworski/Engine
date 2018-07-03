@@ -53,3 +53,12 @@ void Interactable_Obj::setBox(PxRigidDynamic *actor)
 {
 	box = actor;
 }
+
+bool Interactable_Obj::isActive()
+{
+	return active;
+}
+void Interactable_Obj::isActive(bool _active)
+{
+	active = _active;
+}

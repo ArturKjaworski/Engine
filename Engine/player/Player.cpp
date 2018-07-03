@@ -250,7 +250,7 @@ void Player::interact()
 void Player::collect()
 {
 	ammo += 10;
-	cout << ammo << endl;
+//	cout << ammo << endl;
 }
 
 #pragma region basic animation timer

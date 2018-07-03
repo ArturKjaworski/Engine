@@ -11,7 +11,7 @@ public:
 	Coin(const Vec3& pos, const string name, const int& meshId);
 	~Coin();
 	
-	bool collected;
+	
 
 	void setBox(PxRigidDynamic*) override;
 };

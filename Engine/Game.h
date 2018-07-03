@@ -42,6 +42,8 @@ public:
 	Player* player = nullptr;
 
 	vector<Interactable_Obj*> PU_objects;        //Coins/ammo 
+	vector<PxRigidDynamic*> PU_destroy;		//list of object to destroy/set inactive
+
 #pragma endregion
 
 	void init();
@@ -52,6 +54,7 @@ public:
 
 	bool loadTex(const int& id, char* path);
 	void compileModel(const obj_type& object, const int& texId);
+	void preRender();
 	void renderObj();
 
 	template <class T>

@@ -3,13 +3,16 @@ d:\c++\engine\engine\graphics classes\threemaxloader.h(59): warning C4996: 'fope
   c:\program files (x86)\windows kits\10\include\10.0.17134.0\ucrt\stdio.h(208): note: zobacz deklarację „fopen”
 d:\c++\engine\engine\graphics classes\threemaxloader.h(61): warning C4996: 'filelength': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _filelength. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.17134.0\ucrt\corecrt_io.h(486): note: zobacz deklarację „filelength”
-d:\c++\engine\engine\game.h(72): warning C4100: "count": parametr formalny, do którego nie istnieje odwołanie
-d:\c++\engine\engine\game.h(72): warning C4100: "pairs": parametr formalny, do którego nie istnieje odwołanie
-d:\c++\engine\engine\game.h(76): warning C4100: "count": parametr formalny, do którego nie istnieje odwołanie
-d:\c++\engine\engine\game.h(76): warning C4100: "poseBuffer": parametr formalny, do którego nie istnieje odwołanie
-d:\c++\engine\engine\game.h(76): warning C4100: "bodyBuffer": parametr formalny, do którego nie istnieje odwołanie
-d:\c++\engine\engine\game.cpp(308): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
-d:\c++\engine\engine\game.cpp(324): warning C4100: "constantBlockSize": parametr formalny, do którego nie istnieje odwołanie
-d:\c++\engine\engine\game.cpp(324): warning C4100: "constantBlock": parametr formalny, do którego nie istnieje odwołanie
-d:\c++\engine\engine\game.cpp(375): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
+d:\c++\engine\engine\game.h(75): warning C4100: "count": parametr formalny, do którego nie istnieje odwołanie
+d:\c++\engine\engine\game.h(75): warning C4100: "pairs": parametr formalny, do którego nie istnieje odwołanie
+d:\c++\engine\engine\game.h(79): warning C4100: "count": parametr formalny, do którego nie istnieje odwołanie
+d:\c++\engine\engine\game.h(79): warning C4100: "poseBuffer": parametr formalny, do którego nie istnieje odwołanie
+d:\c++\engine\engine\game.h(79): warning C4100: "bodyBuffer": parametr formalny, do którego nie istnieje odwołanie
+d:\c++\engine\engine\game.cpp(216): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
+d:\c++\engine\engine\game.cpp(222): warning C4456: deklaracja „ii” powoduje ukrycie poprzedniej deklaracji lokalnej
+  d:\c++\engine\engine\game.cpp(216): note: zobacz deklarację „ii”
+d:\c++\engine\engine\game.cpp(222): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
+d:\c++\engine\engine\game.cpp(346): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
+d:\c++\engine\engine\game.cpp(362): warning C4100: "constantBlockSize": parametr formalny, do którego nie istnieje odwołanie
+d:\c++\engine\engine\game.cpp(362): warning C4100: "constantBlock": parametr formalny, do którego nie istnieje odwołanie
   Engine.vcxproj -> D:\C++\Engine\Debug\Engine.exe
