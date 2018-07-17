@@ -1,10 +1,10 @@
 #include "stdafx.h"
-#include "Game.h"
+#include "graphics classes/Interface.h"
 
 int _width(920);
 int _height(640);
 
-Game* game = nullptr;
+Interface* inter=nullptr;
 
 #pragma region light vars
 GLfloat lightAmb[] = { 0.5, 0.5, 0.5, 1.0 };
@@ -18,6 +18,7 @@ bool down = false;      //bool for (not)pressed RMB button check
 
 void init()
 {
+
 #pragma region enable
 	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
@@ -31,30 +32,14 @@ void init()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 #pragma endregion
 
-	if (game ==nullptr)
-		game = new Game();
+	if (inter == nullptr)
+		inter = new Interface();
 	else
 	{
-		delete game;
-		game = nullptr;
-		game = new Game();
+		delete inter;
+		inter = nullptr;
+		inter = new Interface();
 	}
-	glutWarpPointer(_width / 2, _height / 2);
-	ShowCursor(false);
-}
-
-void help()
-{
-	system("cls");
-	cout << "1: create PickUp Obj\n";
-	cout << "2: create Interct Obj\n";
-
-	cout << "w,s,a,d: movement\n";
-	cout << "z,x: zoom in/out\n";
-	cout << "\nMouse:\nhold RMB to looking around\nwithout anu btn: move in that direction\n";
-	cout << "LMB to interact (not working for now)\n";
-
-	cout << "q: exit\n";
 }
 
 void render()
@@ -63,10 +48,7 @@ void render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 
-	if (game !=nullptr)
-		game->update();
-
-#pragma region Light
+	#pragma region Light
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lightAmb);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor0);
 	glLightfv(GL_LIGHT0, GL_POSITION, l_pos1);
@@ -75,6 +57,7 @@ void render()
 	glMateriali(GL_FRONT, GL_SHININESS, 10);
 #pragma endregion
 
+	inter->update();
 	glutSwapBuffers();
 }
 
@@ -95,58 +78,74 @@ void keyboard(unsigned char key, int x, int y)
 	PX_UNUSED(x);
 	PX_UNUSED(y);
 	int state = glutGetModifiers();
-	switch (state)
+	if (inter->game != nullptr)
 	{
-	case GLUT_ACTIVE_SHIFT:
-		game->player->setState(Player::run);
-		break;
-	case GLUT_ACTIVE_CTRL:
-		game->player->setState(Player::crouch);
-		break;
-	default:
-		game->player->setState(Player::walk);
-		break;
+		switch (state)
+		{
+		case GLUT_ACTIVE_SHIFT:
+			inter->game->player->setState(Player::run);
+			break;
+		case GLUT_ACTIVE_CTRL:
+			inter->game->player->setState(Player::crouch);
+			break;
+		default:
+			inter->game->player->setState(Player::walk);
+			break;
+		}
 	}
 
 	switch (key)
 	{
-
-#pragma region player control
+#pragma region user control
 	case 'w': case 'W':
-		game->player->move(Player::front);
+	{
+		if (inter->getState() == Interface::gameState::running)
+			inter->game->player->move(Player::front);
+		else
+			--(*inter);
 		break;
+	}
 
 	case 's':case 'S':
-		game->player->move(Player::back);
+	{
+		if (inter->getState() == Interface::gameState::running)
+			inter->game->player->move(Player::back);
+		else
+			++(*inter);
 		break;
+	}
 
 	case 'a':case 'A':
-		game->player->move(Player::left);
+		if (inter->getState() == Interface::gameState::running)
+			inter->game->player->move(Player::left);
 		break;
 
 	case 'd':case 'D':
-		game->player->move(Player::right);
-		break;
-
-	case 32:
-		//jump
+		if (inter->getState() == Interface::gameState::running)
+			inter->game->player->move(Player::right);
 		break;
 
 	case 'x':
-		game->player->zoom('+');
+		if (inter->getState() == Interface::gameState::running)
+			inter->game->player->zoom('+');
 		break;
+
 	case 'z':
-		game->player->zoom('-');
+		if (inter->getState() == Interface::gameState::running)
+			inter->game->player->zoom('-');
 		break;
 #pragma endregion
 
-	case 'Q':
-	case 'q':
+	case 32:
+	case 13:
+		inter->goNext();
+		break;
+
 	case 27:
-		exit(0);
+		inter->goBack();
+		break;
 
 	default:
-		help();
 		break;
 	}
 }
@@ -162,22 +161,27 @@ void mouse(int but, int state, int x, int y)
 
 	if (but == GLUT_RIGHT_BUTTON && state == GLUT_UP)
 	{
-		game->player->setForward();
+		inter->game->player->setForward();
 		down = false;
 	}
 	if (but == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
-		cout << "interact" << endl;
+	{
+		if (inter->getState() == Interface::gameState::running)
+			cout << "interact" << endl;
+	}
 }
 //look around
 void mouseMove(int x, int y)
 {
 	if (down)
-		game->player->mouse(x - width / 2, y - height / 2);
+		if (inter->getState() == Interface::gameState::running)
+			inter->game->player->mouse(x - width / 2, y - height / 2);
 }
 //move in that direction
 void passiveMouseMove(int x, int y)
 {
-	game->player->look(x - width / 2, y - height / 2);
+	if (inter->getState() == Interface::gameState::running)
+		inter->game->player->look(x - width / 2, y - height / 2);
 }
 #pragma endregion
 
@@ -190,22 +194,21 @@ void timer(int val)
 // atexit func
 void ex()
 {
-	if (game != nullptr)
+	if (inter != nullptr)
 	{
-		delete game;
-		game = nullptr;
+		delete inter;
+		inter = nullptr;
 	}
 }
 
 int main(int argc, char *argv[])
 {
 	srand(time(NULL));
-	help();
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowSize(_width, _height);
-	glutInitWindowPosition(1920 - _width, 1080 - _height);
+	glutInitWindowPosition(0,0);
 	glutCreateWindow("Another PacMan?");
 
 	glutDisplayFunc(render);

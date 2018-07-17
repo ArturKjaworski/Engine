@@ -32,7 +32,6 @@ Game::Game()
 	
 
 	init();
-	
 }
 
 Game::~Game()
@@ -123,22 +122,25 @@ void Game::init()
 
 void Game::update()
 {
-	gScene->simulate(SIM_TIME);
-	gScene->fetchResults(true);
 
-	player->update();
+	
+			gScene->simulate(SIM_TIME);
+			gScene->fetchResults(true);
 
-	if (player->cam->camType == Camera::TPP)
-		gluLookAt(player->cam->getPos().x, player->cam->getPos().y, player->cam->getPos().z,
-			player->getPos().x, player->getPos().y, player->getPos().z,
-			0, 1, 0);
-	else
-		gluLookAt(player->cam->getPos().x, player->cam->getPos().y + player->idleY, player->cam->getPos().z,
-			player->getPos().x, player->getPos().y + player->idleY, player->getPos().z,
-			0, 1, 0);
+			player->update();
 
-	preRender();
-	renderObj();
+			if (player->cam->camType == Camera::TPP)
+				gluLookAt(player->cam->getPos().x, player->cam->getPos().y, player->cam->getPos().z,
+					player->getPos().x, player->getPos().y, player->getPos().z,
+					0, 1, 0);
+			else
+				gluLookAt(player->cam->getPos().x, player->cam->getPos().y + player->idleY, player->cam->getPos().z,
+					player->getPos().x, player->getPos().y + player->idleY, player->getPos().z,
+					0, 1, 0);
+
+			preRender();
+			renderObj();
+
 }
 
 #pragma region matrix transformation
@@ -229,7 +231,6 @@ void Game::preRender()
 	}
 
 	PU_destroy.clear();
-
 }
 
 #pragma region render objects

@@ -12,7 +12,8 @@ public:
 	int stamina;
 	int mana;
 	int speed;
-
+	unsigned int ammo;
+	unsigned int score;
 	Camera* cam;
 
 float idleY = 0;
@@ -22,7 +23,7 @@ private:
 	Vec3 rot;
 	Vec3 forward;
 	float alpha;
-	unsigned int ammo;
+
 	
 	int model;
 

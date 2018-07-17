@@ -10,6 +10,7 @@ Player::Player(const int& mesh)
 	stamina = 100;
 	mana = 100;
 	ammo = 10;
+	score = 0;
 	speed = 1;
 	state = idle;
 
@@ -27,6 +28,7 @@ Player::Player(const float& camDist, const int& mesh)
 	stamina = 100;
 	mana = 100;
 	ammo = 10;
+	score = -5;
 	speed = 1;
 	state = idle;
 
@@ -250,6 +252,7 @@ void Player::interact()
 void Player::collect()
 {
 	ammo += 10;
+	score += 5;
 //	cout << ammo << endl;
 }
 

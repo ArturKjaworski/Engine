@@ -149,6 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
+    <ClInclude Include="graphics classes\Interface.h" />
     <ClInclude Include="graphics classes\Targa.hpp" />
     <ClInclude Include="labirynth gen\LabField.h" />
     <ClInclude Include="labirynth gen\LabGen.h" />
@@ -164,6 +165,9 @@
   <ItemGroup>
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="graphics classes\Interface.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
     <ClCompile Include="graphics classes\Targa.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../stdafx.h</PrecompiledHeaderFile>
     </ClCompile>

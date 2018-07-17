@@ -7,6 +7,7 @@
 #include "labirynth gen/LabGen.h"
 #include "graphics classes/Targa.hpp"
 #include "graphics classes/ThreeMaxLoader.h"
+//#include "graphics classes/Interface.h"
 
 class Game : public PxSimulationEventCallback
 {
@@ -14,19 +15,7 @@ public:
 	Game();
 	~Game();
 
-	struct gameState
-	{
-		enum Enum
-		{
-			menu,
-				highscore,
-				options,
-				credits,
-			pauseMenu,
-			run
-		};
-	};
-	
+
 
 	struct FilterGroup
 	{
@@ -39,10 +28,12 @@ public:
 		};
 	};
 
+
 	//amount of objects
 #define obj_amount 1
 	//PickUp objects list;
 	GLint PU_Obj;
+
 
 #pragma region global vars for world & player
 	int labSizeX = 25;
