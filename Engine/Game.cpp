@@ -409,19 +409,6 @@ void Game::onContact(const PxContactPairHeader & pairHeader, const PxContactPair
 				{
 				
 					PU_destroy.push_back(otherActor);
-
-					//const PxU32 numShapes = otherActor->getNbShapes();
-					//PxShape** shapes = (PxShape**)malloc(sizeof(PxShape*)*numShapes);
-
-					//otherActor->getShapes(shapes, numShapes);
-					//for (int ii = 0; ii < numShapes; ++ii)
-					//{
-					//	PxShape* shape = shapes[ii];
-
-					//	//shape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
-					//	
-					//}
-					//free(shapes);
 					
 					//give ammo to player
 					player->collect();

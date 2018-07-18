@@ -2,12 +2,10 @@
 
 #include "player/Player.h"
 #include "Objects/Interactable_Obj.h"
-#include "Objects/PickUp_Obj.h"
-#include "Objects/Coin.h"
 #include "labirynth gen/LabGen.h"
 #include "graphics classes/Targa.hpp"
 #include "graphics classes/ThreeMaxLoader.h"
-//#include "graphics classes/Interface.h"
+
 
 class Game : public PxSimulationEventCallback
 {

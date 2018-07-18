@@ -1,5 +1,53 @@
-﻿  Player.cpp
-d:\c++\engine\engine\player\player.cpp(31): warning C4245: "=": konwersja z "int" do "unsigned int", niezgodność ze znakiem/bez znaku
-d:\c++\engine\engine\player\player.cpp(197): warning C4458: deklaracja „state” powoduje ukrycie składowej klasy
-  d:\c++\engine\engine\player\player.h(45): note: zobacz deklarację „Player::state”
+﻿  Engine.cpp
+d:\c++\engine\engine\graphics classes\threemaxloader.h(59): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.17134.0\ucrt\stdio.h(208): note: zobacz deklarację „fopen”
+d:\c++\engine\engine\graphics classes\threemaxloader.h(61): warning C4996: 'filelength': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _filelength. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.17134.0\ucrt\corecrt_io.h(486): note: zobacz deklarację „filelength”
+d:\c++\engine\engine\game.h(79): warning C4100: "count": parametr formalny, do którego nie istnieje odwołanie
+d:\c++\engine\engine\game.h(79): warning C4100: "pairs": parametr formalny, do którego nie istnieje odwołanie
+d:\c++\engine\engine\game.h(83): warning C4100: "count": parametr formalny, do którego nie istnieje odwołanie
+d:\c++\engine\engine\game.h(83): warning C4100: "poseBuffer": parametr formalny, do którego nie istnieje odwołanie
+d:\c++\engine\engine\game.h(83): warning C4100: "bodyBuffer": parametr formalny, do którego nie istnieje odwołanie
+d:\c++\engine\engine\engine.cpp(11): warning C4838: konwersja z „double” do „GLfloat” wymaga konwersji zawężającej
+  Game.cpp
+d:\c++\engine\engine\graphics classes\threemaxloader.h(59): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.17134.0\ucrt\stdio.h(208): note: zobacz deklarację „fopen”
+d:\c++\engine\engine\graphics classes\threemaxloader.h(61): warning C4996: 'filelength': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _filelength. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.17134.0\ucrt\corecrt_io.h(486): note: zobacz deklarację „filelength”
+d:\c++\engine\engine\game.h(79): warning C4100: "count": parametr formalny, do którego nie istnieje odwołanie
+d:\c++\engine\engine\game.h(79): warning C4100: "pairs": parametr formalny, do którego nie istnieje odwołanie
+d:\c++\engine\engine\game.h(83): warning C4100: "count": parametr formalny, do którego nie istnieje odwołanie
+d:\c++\engine\engine\game.h(83): warning C4100: "poseBuffer": parametr formalny, do którego nie istnieje odwołanie
+d:\c++\engine\engine\game.h(83): warning C4100: "bodyBuffer": parametr formalny, do którego nie istnieje odwołanie
+d:\c++\engine\engine\game.cpp(218): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
+d:\c++\engine\engine\game.cpp(224): warning C4456: deklaracja „ii” powoduje ukrycie poprzedniej deklaracji lokalnej
+  d:\c++\engine\engine\game.cpp(218): note: zobacz deklarację „ii”
+d:\c++\engine\engine\game.cpp(224): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
+d:\c++\engine\engine\game.cpp(347): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
+d:\c++\engine\engine\game.cpp(363): warning C4100: "constantBlockSize": parametr formalny, do którego nie istnieje odwołanie
+d:\c++\engine\engine\game.cpp(363): warning C4100: "constantBlock": parametr formalny, do którego nie istnieje odwołanie
+  Generowanie kodu...
+  Interface.cpp
+d:\c++\engine\engine\graphics classes\threemaxloader.h(59): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.17134.0\ucrt\stdio.h(208): note: zobacz deklarację „fopen”
+d:\c++\engine\engine\graphics classes\threemaxloader.h(61): warning C4996: 'filelength': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _filelength. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.17134.0\ucrt\corecrt_io.h(486): note: zobacz deklarację „filelength”
+d:\c++\engine\engine\game.h(79): warning C4100: "count": parametr formalny, do którego nie istnieje odwołanie
+d:\c++\engine\engine\game.h(79): warning C4100: "pairs": parametr formalny, do którego nie istnieje odwołanie
+d:\c++\engine\engine\game.h(83): warning C4100: "count": parametr formalny, do którego nie istnieje odwołanie
+d:\c++\engine\engine\game.h(83): warning C4100: "poseBuffer": parametr formalny, do którego nie istnieje odwołanie
+d:\c++\engine\engine\game.h(83): warning C4100: "bodyBuffer": parametr formalny, do którego nie istnieje odwołanie
+  LabGen.cpp
+d:\c++\engine\engine\graphics classes\threemaxloader.h(59): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.17134.0\ucrt\stdio.h(208): note: zobacz deklarację „fopen”
+d:\c++\engine\engine\graphics classes\threemaxloader.h(61): warning C4996: 'filelength': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _filelength. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.17134.0\ucrt\corecrt_io.h(486): note: zobacz deklarację „filelength”
+d:\c++\engine\engine\game.h(79): warning C4100: "count": parametr formalny, do którego nie istnieje odwołanie
+d:\c++\engine\engine\game.h(79): warning C4100: "pairs": parametr formalny, do którego nie istnieje odwołanie
+d:\c++\engine\engine\game.h(83): warning C4100: "count": parametr formalny, do którego nie istnieje odwołanie
+d:\c++\engine\engine\game.h(83): warning C4100: "poseBuffer": parametr formalny, do którego nie istnieje odwołanie
+d:\c++\engine\engine\game.h(83): warning C4100: "bodyBuffer": parametr formalny, do którego nie istnieje odwołanie
+d:\c++\engine\engine\labirynth gen\labgen.cpp(51): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
+d:\c++\engine\engine\labirynth gen\labgen.cpp(223): warning C4018: "<": niezgodność typu ze znakiem/bez znaku
+  Generowanie kodu...
   Engine.vcxproj -> D:\C++\Engine\Debug\Engine.exe

@@ -26,7 +26,7 @@ public:
 
 	virtual void setBox(PxRigidDynamic*);
 
-	bool isActive();
-	void isActive(bool _active);
+virtual	bool isActive();
+virtual	void isActive(bool _active);
 };
 

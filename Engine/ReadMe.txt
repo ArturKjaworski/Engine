@@ -31,6 +31,9 @@ labirynth gen:
 		- control its own walls
 		
 graphics classes folder:
+	Interface:
+		- interface control (e.g. main menu, UI Ingame)
+		- create game class
 	Targa:
 		- open .tga texture format for usage in app
 	ThreeMaxLoader:
