@@ -1,6 +1,12 @@
 #pragma once
 #include "..\Game.h"
-
+#include "menus\Menu.h"
+#include "menus\Options.h"
+#include "menus\PauseMenu.h"
+#include "menus\HowTo.h"
+#include "menus\Highscore.h"
+#include "menus\Credits.h"
+#include "menus\Ingame.h"
 class Interface
 {
 public:
@@ -8,10 +14,19 @@ public:
 	~Interface();
 
 	//window size
-	int _w, _h;
+	int _w = glutGet(GLUT_WINDOW_WIDTH);
+	int _h = glutGet(GLUT_WINDOW_HEIGHT);
 
-#pragma region Game class
 	Game* game = nullptr;
+
+#pragma region UI vars
+	Menu* menu;
+	Options* options = nullptr;
+	PauseMenu* pauseMenu = nullptr;
+	HowTo* howTo = nullptr;
+	Highscore* highscore = nullptr;
+	Credits* credits = nullptr;
+	Ingame* inGame = nullptr;
 #pragma endregion
 
 	struct gameState
@@ -32,22 +47,26 @@ public:
 	void goBack();
 	//set UI to chosen option (forward)
 	void goNext();
+
+	//on mouse overlap
+	void mouse(const int& x, const int& y);
+	//on mouse click
+	void mouseClick(const int & x, const int & y);
+
 	//update UI (set current UI)
 	void update();
-
-	void UIinit();
-	void UIcleanUp();
 
 	//get current state of UI (e.g. highscore)
 	int getState();
 
+#pragma region op overload
 	//pre
 	Interface& operator++();
 	Interface& operator--();
 	//post
 	Interface operator++(int);
 	Interface operator--(int);
-
+#pragma endregion
 
 private:
 	//current state of UI (e.g. highscore)
@@ -55,16 +74,12 @@ private:
 	//current chosen option in UI (to accept that option use goNext())
 	uint8_t select;
 
-	void menu();
+	void UIinit();
+	void UIcleanUp();
+	void buttonClear(int i);
+
 	void newGame();
-	void howTo();
-	void highscore();
-	void options();
-	void credits();
-	void pauseMenu();
-	void running();
+	void gameCleanup();
 
 	GLvoid *font_style = GLUT_BITMAP_HELVETICA_18;
-	void printw(float x, float y, float z, string format);
-
 };

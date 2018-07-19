@@ -1,18 +1,59 @@
 #include "../stdafx.h"
 #include "Interface.h"
 
-
-	Interface::Interface() : state(gameState::menu), select(0){}
+	Interface::Interface() : state(gameState::menu), select(0)
+	{
+		menu = new Menu("menu", _w, _h);
+		options = new Options("options", _w, _h);
+		pauseMenu = new PauseMenu("PauseMenu", _w, _h);
+		howTo = new HowTo("howTo", _w, _h);
+		highscore = new Highscore("highscore", _w, _h);
+		credits = new Credits("credits", _w, _h);
+		inGame = new Ingame("inGame", _w, _h);
+	}
 
 	Interface::~Interface() 
 	{
-		if (game != nullptr)
+		gameCleanup();
+
+		if (menu != nullptr)
 		{
-			delete game;
-			game = nullptr;
+			delete menu;
+			menu = nullptr;
+		}
+		if (options != nullptr)
+		{
+			delete options;
+			options = nullptr;
+		}
+		if (pauseMenu != nullptr)
+		{
+			delete pauseMenu;
+			pauseMenu = nullptr;
+		}
+		if (howTo != nullptr)
+		{
+			delete howTo;
+			howTo = nullptr;
+		}
+		if (highscore != nullptr)
+		{
+			delete highscore;
+			highscore = nullptr;
+		}
+		if (credits != nullptr)
+		{
+			delete credits;
+			credits = nullptr;
+		}
+		if (inGame != nullptr)
+		{
+			delete inGame;
+			inGame = nullptr;
 		}
 	}
 
+	#pragma region menu(UI) control
 	void Interface::goBack()
 	{
 		//for esc
@@ -43,7 +84,10 @@
 
 			case Interface::gameState::options:
 			{
-			//options: accept back
+			
+				select = 0;
+				menu->buttons[3]->active = false;
+				menu->buttons[0]->active = true;
 				state = gameState::menu;
 				break;
 			}
@@ -91,7 +135,7 @@
 			case gameState::options:
 			{
 				select = 0;
-				//same as 
+				//same as menu
 				break;
 			}
 			case gameState::running:
@@ -101,17 +145,114 @@
 			}
 			case gameState::pauseMenu:
 			{
-				if (select  == 0)
+				if (select == 0)
+				{
 					state = gameState::running;
+					ShowCursor(false);
+				}
 				else 
 				{
 					state = gameState::menu;
-					ShowCursor(false);
+					gameCleanup();
 				}
 				select = 0;
 			}
 		}
 	}
+#pragma endregion
+
+	//clear active button
+	void Interface::buttonClear(int i)
+	{
+		if (state != gameState::pauseMenu)
+		{
+			for (int ii = 0; ii < menu->buttons.size(); ++ii)
+			{
+				if (ii != i)
+					menu->buttons[ii]->active = false;
+			}
+		}
+		else
+		{
+			for (int ii = 0; ii < pauseMenu->buttons.size(); ++ii)
+			{
+				if (ii != i)
+					pauseMenu->buttons[ii]->active = false;
+			}
+		}
+	}
+
+	#pragma region mouse control
+	void Interface::mouseClick(const int & x, const int & y)
+	{
+		switch (state)
+		{
+			case gameState::menu:
+			case gameState::highscore:
+			case gameState::credits:
+			case gameState::howTo:
+			{
+			for (int ii = 0; ii < menu->buttons.size(); ++ii)
+				if (menu->buttons[ii]->onClick(x, y))
+				{
+					select = ii;
+					buttonClear(ii);
+					goNext();
+				}
+			break;
+			}
+			case gameState::options:
+			{
+				//TODO
+				break;
+			}
+			case gameState::pauseMenu:
+			{
+			for (int ii = 0; ii < pauseMenu->buttons.size(); ++ii)
+				if (pauseMenu->buttons[ii]->onClick(x, y))
+				{
+					select = ii;
+					buttonClear(ii);
+					goNext();
+				}
+			}
+		}
+	}
+
+	void Interface::mouse(const int & x, const int & y)
+	{
+		switch (state)
+		{
+			case gameState::menu:
+			case gameState::highscore:
+			case gameState::credits:
+			case gameState::howTo:
+			{
+			for (int ii = 0; ii < menu->buttons.size(); ++ii)
+				if (menu->buttons[ii]->onPointer(x, y))
+				{
+					select = ii;
+					buttonClear(ii);
+				}
+			break;
+			}
+			case gameState::options:
+			{
+				//TODO
+				break;
+			}
+			case gameState::pauseMenu:
+			{
+			for (int ii = 0; ii < pauseMenu->buttons.size(); ++ii)
+				if (pauseMenu->buttons[ii]->onClick(x, y))
+				{
+					select = ii;
+					buttonClear(ii);
+				}
+			}
+		}
+	}
+#pragma endregion
 
 	void Interface::update()
 	{
@@ -119,51 +260,49 @@
 		_h = glutGet(GLUT_WINDOW_HEIGHT);
 		
 		 UIinit();
-
+		
 		switch (state)
 		{
-		
 			case gameState::menu:
 			{
-				menu();
+				menu->render(_w, _h);
 				break;
 			}
 			case gameState::howTo:
 			{
-				menu();
-				howTo();
+				menu->render(_w, _h);
+				howTo->render(_w, _h);
 				break;
 			}
 			case gameState::highscore:
 			{
-				menu();
-				highscore();
+				menu->render(_w, _h);
+				highscore->render(_w, _h);
 				break;
 			}
 			case gameState::credits:
 			{
-				menu();
-				credits();
+				menu->render(_w, _h);
+				credits->render(_w, _h);
 				break;
 			}
 			case gameState::options:
 			{
-				menu();
-				options();
+				options->render(_w, _h);
 				break;
 			}
 			case gameState::pauseMenu:
 			{
-				pauseMenu();
+				pauseMenu->render(_w, _h);
 				break;
 			}
 			case gameState::running:
 			{
 				if (game != nullptr && getState() == gameState::running)
 				{
-					running();
+					inGame->render(_w, _h, game->player->score, game->player->ammo, game->player->hp);
 					UIcleanUp();
-
+					
 					glEnable(GL_LIGHTING);
 					game->update();
 					glDisable(GL_LIGHTING);
@@ -196,31 +335,7 @@
 	}
 #pragma endregion
 
-	#pragma region GUI
-	void Interface::menu()
-	{
-		glColor4f(1.0, 1.0, 1.0, 1.0);
-
-		if (state != Interface::gameState::options)
-		{
-			if (select == 255)
-				select = 5;
-			else if (select > 5)
-				select = 0;
-
-			if (select < 4)
-				printw(0.05*_w, _h - (_h / 2 * 0.3) - 5 - (45 * select), -1, "___________");
-			else
-				printw(0.05*_w, _h - (_h / 2 * 0.3) - 5 - (45 * (select + 6)), -1, "___________");
-		}
-		printw(0.05*_w, _h-(_h/2*0.3), -1, "New Game");
-		printw(0.05*_w, _h-(_h/2*0.3)-45, -1, "How to play");
-		printw(0.05*_w, _h - (_h / 2 * 0.3) -90, -1, "HighScore");
-		printw(0.05*_w, _h - (_h / 2 * 0.3) -135, -1, "Options");
-		printw(0.05*_w, (_h / 2 * 0.3) , -1, "Credits");
-		printw(0.05*_w, (_h / 2 * 0.3) -45, -1, "Exit");
-	}
-
+	#pragma region init & cleanUp game
 	void Interface::newGame()
 	{
 		if (game == nullptr)
@@ -237,69 +352,14 @@
 		glutWarpPointer(_w / 2, _h / 2);
 	}
 
-	void Interface::running()
+	void Interface::gameCleanup()
 	{
-		glColor4f(1, 0, 0, 1);
-		printw(0.05*_w, (_h / 2 * 0.3) - 45, -1, "Score: " + to_string(game->player->score));
-		printw(0.9*_w, (_h / 2 * 0.3+35) - 45, -1, "Ammo: " + to_string(game->player->ammo));
-		printw(0.9*_w, (_h / 2 * 0.3) - 45, -1, "HP: " + to_string(game->player->hp));
+		if (game != nullptr)
+		{
+			delete game;
+			game = nullptr;
+		}
 	}
-
-	void Interface::howTo()
-	{
-		printw(0.6*_w, _h - (_h / 2 * 0.3), -1, "How to play");
-		printw(0.5*_w, _h - (_h / 2 * 0.35) - 45, -1, "10 points for every killed opponent");
-		printw(0.51*_w, _h - (_h / 2 * 0.35) - 70, -1, "5 points for every ammo colected");
-		printw(0.52*_w, _h - (_h / 2 * 0.35) - 95, -1, "Collect all ammo to finish game");
-
-		printw(0.62*_w, _h - (_h / 2 * 0.9), -1, "Control");
-		printw(0.3*_w, _h - (_h / 2 * 0.9) - 45, -1, "Keyboard");
-		printw(0.3*_w, _h - (_h / 2 * 0.9) - 90, -1, "W, S, A, D - movement");
-		printw(0.3*_w, _h - (_h / 2 * 0.9) - 115, -1, "Z, X - zoom in/out");
-		printw(0.3*_w, _h - (_h / 2 * 0.9) - 140, -1, "ESC - pause/exit");
-
-		printw(0.3*_w, _h - (_h / 2 * 0.9) - 185, -1, "Mouse");
-		printw(0.3*_w, _h - (_h / 2 * 0.9) - 230, -1, "No button pressed - changing direction of movement");
-		printw(0.3*_w, _h - (_h / 2 * 0.9) - 255, -1, "RMB pressed - look around without changing movement direction");
-		printw(0.3*_w, _h - (_h / 2 * 0.9) - 280, -1, "LPM - attack");
-	}
-
-	void Interface::highscore()
-	{
-		//odczytaj z notatnika highscore
-		printw(0.6*_w, _h - (_h / 2 * 0.3), -1, "HighScore");
-
-		for (int ii = 1; ii <= 10; ++ii)
-			printw(0.3*_w, _h - (_h / 2 * 0.3) - (ii)*45, -1, to_string(ii) + ". ");
-	}
-
-	void Interface::options()
-	{
-		select = 0;
-	}
-
-	void Interface::credits()
-	{
-		printw(0.6*_w, _h - (_h / 2 * 0.3), -1, "Created by:");
-		printw(0.59*_w, _h - (_h / 2 * 0.3)-90, -1, "Artur Jaworski");
-	}
-
-	void Interface::pauseMenu()
-	{
-		glColor4f(1.0, 1.0, 1.0, 1.0);
-
-		if (select == 255)
-			select = 1;
-		else if (select > 1)
-			select = 0;
-
-		printw(0.47*_w, _h - (_h / 2) + 25 -(select * 45), -1, "___________");
-
-		printw(0.47*_w, _h - (_h / 2)+90, -1, "Game paused");
-		printw(0.49*_w, _h - (_h / 2)+30, -1, "Continue");
-		printw(0.47*_w, _h - (_h / 2)-15, -1, "Exit to Menu");
-	}
-
 #pragma endregion
 
 	int Interface::getState()
@@ -310,35 +370,88 @@
 	#pragma region op overload
 	Interface & Interface::operator++()
 	{
-		++select;
+		if (state != gameState::pauseMenu)
+		{
+			menu->buttons[select]->active = false;
+			++select;
+			if (select >= menu->buttons.size())
+				select = 0;
+			menu->buttons[select]->active = true;
+		}
+		else
+		{
+			pauseMenu->buttons[select]->active = false;
+			++select;
+			if (select >= pauseMenu->buttons.size())
+				select = 0;
+			pauseMenu->buttons[select]->active = true;
+		}
 		return *this;
 	}
 
 	Interface & Interface::operator--()
 	{
-		--select;
+		if (state != gameState::pauseMenu)
+		{
+			menu->buttons[select]->active = false;
+			--select;
+			if (select == 255)
+				select = 5;
+			menu->buttons[select]->active = true;
+		}
+		else
+		{
+			pauseMenu->buttons[select]->active = false;
+			--select;
+			if (select == 255)
+				select = 1;
+			pauseMenu->buttons[select]->active = true;
+		}
 		return *this;
 	}
 
 	Interface Interface::operator++(int)
 	{
 		Interface tmp = *this;
-		++select;
+
+		if (state != gameState::pauseMenu)
+		{
+			menu->buttons[select]->active = false;
+			++select;
+			if (select >= menu->buttons.size())
+				select = 0;
+			menu->buttons[select]->active = true;
+		}
+		else
+		{
+			pauseMenu->buttons[select]->active = false;
+			++select;
+			if (select >= pauseMenu->buttons.size())
+				select = 0;
+			pauseMenu->buttons[select]->active = true;
+		}
 		return tmp;
 	}
 
 	Interface Interface::operator--(int)
 	{
 		Interface tmp = *this;
-		--select;
+		if (state != gameState::pauseMenu)
+		{
+			menu->buttons[select]->active = false;
+			--select;
+			if (select == 255)
+				select = 5;
+			menu->buttons[select]->active = true;
+		}
+		else
+		{
+			pauseMenu->buttons[select]->active = false;
+			--select;
+			if (select == 255)
+				select = 1;
+			pauseMenu->buttons[select]->active = true;
+		}
 		return tmp;
 	}
 #pragma endregion
-
-	void Interface::printw(float x, float y, float z, string format) 
-	{
-		glRasterPos3f(x, y, z);
-
-		for (int i = 0; format[i] != '\0'; i++)
-			glutBitmapCharacter(font_style, format[i]);
-	}	

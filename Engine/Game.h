@@ -13,8 +13,6 @@ public:
 	Game();
 	~Game();
 
-
-
 	struct FilterGroup
 	{
 		enum Enum

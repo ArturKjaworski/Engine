@@ -168,6 +168,10 @@ void mouse(int but, int state, int x, int y)
 	{
 		if (inter->getState() == Interface::gameState::running)
 			cout << "interact" << endl;
+		else
+		{
+			inter->mouseClick(x, _height -y);
+		}
 	}
 }
 //look around
@@ -176,12 +180,15 @@ void mouseMove(int x, int y)
 	if (down)
 		if (inter->getState() == Interface::gameState::running)
 			inter->game->player->mouse(x - width / 2, y - height / 2);
+
 }
 //move in that direction
 void passiveMouseMove(int x, int y)
 {
 	if (inter->getState() == Interface::gameState::running)
 		inter->game->player->look(x - width / 2, y - height / 2);
+	else
+		inter->mouse(x, _height - y);
 }
 #pragma endregion
 

@@ -31,6 +31,26 @@ labirynth gen:
 		- control its own walls
 		
 graphics classes folder:
+	menus folder:
+		Button class
+			- class for buttons...
+		Panel class:
+			- abstract class. parent of all other panels in that folder
+		Credits class:
+			- panel(GUI) for credits
+		Highscore class:
+			- panel(GUI) for highscore
+		HowTo class:
+			- panel(GUI) for how to play
+		Ingame class:
+			- panel(GUI) for ingame UI
+		Menu class:
+			- panel(GUI) for main menu
+		Options class:
+			- panel(GUI) for options
+		PauseMenu class:
+			- panel(GUI) for pause menu
+
 	Interface:
 		- interface control (e.g. main menu, UI Ingame)
 		- create game class
